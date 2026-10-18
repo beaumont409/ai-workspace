@@ -1,0 +1,57 @@
+/* ===== Theme System ===== */
+
+/* Luxuary: Black & Gold */
+[data-theme="luxury"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-card: #1a1a1a;
+    --text-primary: #f5f5f5;
+    --text-secondary: #b0b0b0;
+    --accent: #ffd700;
+    --accent-glow: rgba(255, 215, 0, 0.4);
+    --accent-secondary: #ffaa00;
+    --border: rgba(255, 215, 0, 0.2);
+    --shadow: rgba(0, 0, 0, 0.6);
+}
+
+/* Cyberpunk: Black & Laser Green */
+[data-theme="cyberpunk"] {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #1a1a2e;
+    --bg-card: #16213e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0b0;
+    --accent: #00d4ff;
+    --accent-glow: rgba(0, 212, 255, 0.4);
+    --accent-secondary: #00ff88;
+    --border: rgba(0, 212, 255, 0.2);
+    --shadow: rgba(0, 0, 0, 0.4);
+}
+
+/* Modern: Blue & White */
+[data-theme="modern"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-card: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --accent-secondary: #06b6d4;
+    --border: rgba(59, 130, 246, 0.2);
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Business: Professional Gray & Blue */
+[data-theme="business"] {
+    --bg-primary: #1e293b;
+    --bg-secondary: #334155;
+    --bg-card: #475569;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --accent: #60a5fa;
+    --accent-glow: rgba(96, 165, 250, 0.4);
+    --accent-secondary: #34d399;
+    --border: rgba(96, 165, 250, 0.2);
+    --shadow: rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,5 @@
+<!-- Placeholder SVG for demo images -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250">
+    <rect width="400" height="250" fill="#1a1a2e"/>
+    <text x="200" y="130" text-anchor="middle" fill="#00d4ff" font-size="18" font-family="monospace">NexaCore Demo</text>
+</svg>
