@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"
+<title>O.E.M.Unlocks7t</title><style>
+:root {
+  --bg: #060806;
+  --bg-soft: #0c0f0c;
+  --accent: #c6ff1a;
+  --accent-dim: #3d4a12;
+  --text: #eef4f6;
+  --text-dim: #8a97a3;
+  --line: #1c2128;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg)
+; color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body { min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+body::before {
+  content: ""
+; position: fixed; top: -20%; right: -30%; width: 80vw; height: 80vw; max-width: 700px; max-height: 700px; background: radial-gradient(circle, rgba(198,255,26,0.14) 0%, rgba(198,255,26,0) 70%); pointer-events: none; z-index: 0;
+}
+header { position: relative; z-index: 1; padding: 28px 20px 20px; border-bottom: 1px solid var(--line); }
+.logo{ font-size: clamp(26px, 8vw, 38px); font-weight: 900; letter-spacing: -0.01em; line-height: 1.05; color: var(--accent); text-transform: uppercase; }.logo .line-1 { display: block; }
+.logo .line-2 { display: block; }
+.tagline {margin-top: 6px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+main { position: relative; z-index: 1; flex: 1; padding: 40px 20px 60px; max-width: 480px; margin: 0 auto; width: 100%; }
+.hero-eyebrow { display: inline-block; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent-dim); border-radius: 999px; padding: 5px 12px; margin-bottom: 18px; }
+h1 { font-size: clamp(28px, 8vw, 40px); line-height: 1.15; font-weight: 700; margin-bottom: 16px; }
+.lede { color: var(--text-dim); font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+.divider { height: 1px; background: var(--line); margin: 36px 0; }
+.section-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent)
+; margin-bottom: 16px; }
+.service-card{ padding: 20px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.service-card:last-child { border-bottom: none; }
+.service-name{ font-size: 17px; font-weight: 600; color: var(--text); }
+.service-desc { font-size: 14px; color: var(--text-dim);line-height: 1.5; }
+.order-btn { display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: var(--accent); color: var(--bg); font-size: 14px; font-weight: 700; text-decoration: none; border-radius: 6px; text-transform: uppercase; transition: transform 0.2s ease; text-align: center; }
+.order-btn:active { transform: scale(0.96); }
+</style></head><body>
+<header>
+  <div class="logo"> <span class="line-1">O.E.M.</span>
+    <span class="line-2">Unlocks7T</span>
+  </div>
+  <div class="tagline">Device Unlock Services</div>
+</header>
+<main>
+  <span class="hero-eyebrow">Now Taking Requests</span>
+  <h1>Unlock your device. Own it fully.</h1>
+  <p class="lede">Fast, reliable OEM unlocking for phones and tablets. No middlemen, no guesswork — just a clean unlock done right.</p>
+<div class="divider"></div><div class="section-label">Select Service</div>
+<div class="service-grid">
+  <div class="service-card">
+    <div class="service-name">Bootloader Unlock</div>
+    <div class="service-desc">OEM unlock for custom ROMs, rooting, and full device control.</div>
+    <a href="payment.php?service=bootloader" class="order-btn">Order Now</a>
+  </div>
+  <div class="service-card">
+    <div class="service-name">FRP Removal</div>
+    <div class="service-desc">Factory Reset Protection cleared for verified device owners.
+    <a href="payment.php?service=frp" class="order-btn">Order Now</a>
+  </div>
+</div>
+<div class="divider"></div>
+<div class="section-label">Contact</div >
+<p class="lede" style="margin-bottom:0;">Reach out directly to get a device evaluated and quoted.</p>
+</main>
+<footer style="padding: 24px 20px 36px; text-align: center; font-size: 13px; color: var(--text-dim); border-top: 1px solid var(--line);">
+  &copy; 2026 O.E.M.Unlocks7t. All rights reserved.
+</footer>
+</body>
+</html>
+
