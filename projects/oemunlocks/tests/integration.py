@@ -59,10 +59,15 @@ class Client:
 
 
 class Server:
-    def __init__(self, directory, configure=True, admin=True, curl=True):
+    def __init__(self, directory, configure=True, admin=True, curl=True, http_test=True):
         self.directory = Path(directory)
         self.directory.mkdir()
         self.env = os.environ.copy()
+        # This opt-out is honored only by PHP's disposable built-in server.
+        if http_test:
+            self.env['OEM_TEST_HTTP'] = '1'
+        else:
+            self.env.pop('OEM_TEST_HTTP', None)
         for key in ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "OEM_DATA_DIR",
                     "OEM_ADMIN_USER", "OEM_ADMIN_PASSWORD_HASH"]:
             self.env.pop(key, None)
@@ -358,6 +363,51 @@ class OEMTests(unittest.TestCase):
             self.assertNotIn("..", name)
             self.assertNotIn("landing", name)
             self.assertNotIn(".env", name)
+
+    def test_23_leaked_quote_cannot_be_consumed_by_another_session(self):
+        owner, _ = self.client.form()
+        other = Client(self.server.base)
+        attacker, _ = other.form()
+        attacker['quote_id'] = owner['quote_id']
+        code, _, _ = other.request('/process_order.php', attacker, json_response=True)
+        self.assertEqual(code, 409)
+        with self.server.db() as db:
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM orders').fetchone()[0], 0)
+        # The failed theft must not consume the owner's quote.
+        self.assertEqual(self.client.request('/process_order.php', owner, json_response=True)[0], 201)
+
+    def test_24_pruning_preserves_reportable_quotes_and_order_evidence(self):
+        self.submit()
+        self.assertEqual(self.review('payment_verified', verification='1')[0], 200)
+        order = self.order()
+        late, _ = self.client.form('frp')
+        now = int(time.time())
+        with self.server.db() as db:
+            db.execute('UPDATE quotes SET created_at = ?, expires_at = ? WHERE id = ?',
+                       (now - 86401, now - 85501, order['quote_id']))
+            db.execute('UPDATE quotes SET created_at = ?, expires_at = ? WHERE id = ?',
+                       (now - 86340, now - 85440, late['quote_id']))
+            db.execute('INSERT INTO quotes VALUES (?, ?, ?, ?, ?, ?, ?)',
+                       ('abandoned', 'frp', 3000, 5000000, '0.00060000', now - 86401, now - 85501))
+        # Cleanup also runs when an existing session quote is reused.
+        self.client.form('bootloader')
+        with self.server.db() as db:
+            remaining = {row[0] for row in db.execute('SELECT id FROM quotes')}
+            self.assertNotIn(order['quote_id'], remaining)
+            self.assertNotIn('abandoned', remaining)
+            self.assertIn(late['quote_id'], remaining)
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM order_events').fetchone()[0], 1)
+        self.assertEqual(self.order(), order)
+        self.assertEqual(self.client.request('/process_order.php', late, json_response=True)[0], 201)
+
+    def test_25_default_http_cookie_is_secure_without_https(self):
+        other = Server(Path(self.temp.name) / 'secure', http_test=False)
+        try:
+            code, _, headers = Client(other.base).request('/payment.php')
+            self.assertEqual(code, 200)
+            self.assertIn('secure', headers['Set-Cookie'].lower())
+        finally:
+            other.close()
 
 
 if __name__ == "__main__":

@@ -33,10 +33,29 @@ Order records contain the quoted USD price, BTC total, rate, time, and wallet.
 Duplicate transaction IDs and duplicate quote submissions are rejected.
 Successful HTML submissions redirect to a receipt to prevent refresh resubmits.
 
+Quotes must be submitted from the browser session that created them. Keep that
+session until reporting payment; if it is lost, retain the transaction ID and
+contact staff rather than sending another payment. A quote ID alone cannot be
+used to submit an order from a different session.
+
+Checkout removes quote rows strictly older than the 24-hour reporting window,
+including abandoned and used quotes. It preserves younger quotes even after the
+15-minute send window expires. Orders and audit events are never pruned: orders
+retain their own quoted amounts, rate, time, and wallet. An index supports this
+cleanup; SQLite reuses freed pages but does not automatically shrink the file.
+This is a retention policy, not a hard bound on traffic within 24 hours. Keep
+web-server request limits, session cleanup, and disk-capacity monitoring in place.
+
 ## Runtime configuration
 
 Requires PHP 8.3+, PDO SQLite, cURL with a working CA certificate store, and
 working PHP sessions. Use HTTPS in production.
+
+Session cookies default to Secure, HttpOnly, and SameSite=Strict, even when PHP
+does not receive HTTPS from a TLS terminator. Do not trust client-supplied
+forwarded headers to decide transport security. The disposable built-in PHP
+HTTP integration server explicitly sets OEM_TEST_HTTP=1; only cli-server honors
+that test opt-out, and PHP-FPM always uses Secure cookies.
 
 Configure these in the PHP-FPM process environment, outside the document root:
 
@@ -82,14 +101,19 @@ email service is configured; staff must follow up using the stored email.
 From this directory:
 
     python3 tests/integration.py
+    python3 tests/quote_regression.py
     php tools/preflight.php
 
 The integration suite uses disposable private databases and local PHP servers,
 a deterministic cached rate, and no real Telegram messages or payments.
 PHP_COMMAND may contain a JSON command array for a custom local runtime.
+The quote regression suite invokes actual PHP handlers with disposable data
+without sockets; it does not replace HTTP integration and staging verification.
 
 The preflight checks PHP, extensions, configured values, storage, and live
-pricing; it sends no Telegram message. It does not prove PHP-FPM has the same
+pricing with the rate cache explicitly bypassed; it sends no Telegram message.
+An unavailable live service fails preflight even if checkout has a fresh cache.
+It does not prove PHP-FPM has the same
 environment as CLI, that Nginx routes to this directory, or that TLS works.
 
 ## Deployment preparation

@@ -29,7 +29,9 @@ function oem_session(): void
         session_name('oem_session');
         session_set_cookie_params([
             'httponly' => true,
-            'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+            // Only the disposable built-in HTTP test server may opt out.
+            'secure' => PHP_SAPI !== 'cli-server' || getenv('OEM_TEST_HTTP') !== '1'
+                || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
             'samesite' => 'Strict',
             'path' => '/',
         ]);
@@ -122,13 +124,14 @@ function oem_db(): PDO
         rate_usd_cents INTEGER NOT NULL, btc TEXT NOT NULL,
         created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL
     )");
+    $db->exec('CREATE INDEX IF NOT EXISTS quotes_created_at ON quotes (created_at)');
     return $db;
 }
 
-function oem_rate(PDO $db): array
+function oem_rate(PDO $db, bool $refresh = false): array
 {
     $cached = $db->query('SELECT usd_cents, fetched_at FROM market_rate WHERE id = 1')->fetch();
-    if ($cached && (int)$cached['fetched_at'] >= time() - 60
+    if (!$refresh && $cached && (int)$cached['fetched_at'] >= time() - 60
         && (int)$cached['fetched_at'] <= time() && (int)$cached['usd_cents'] > 0) {
         return ['usd_cents' => (int)$cached['usd_cents'], 'fetched_at' => (int)$cached['fetched_at']];
     }
@@ -169,6 +172,10 @@ function oem_btc(int $usdCents, int $rateCents): string
 function oem_quote(PDO $db, string $service): array
 {
     oem_session();
+    // Retain the full reporting window, not just the 15-minute send window.
+    // Orders contain their own immutable quote evidence; never prune orders/events.
+    $prune = $db->prepare('DELETE FROM quotes WHERE created_at < ?');
+    $prune->execute([time() - 86400]);
     foreach ($_SESSION['quotes'] ?? [] as $id => $quote) {
         if ($quote['created_at'] < time() - 86400) {
             unset($_SESSION['quotes'][$id]);

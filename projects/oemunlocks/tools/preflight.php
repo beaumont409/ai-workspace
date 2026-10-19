@@ -29,8 +29,8 @@ check('Telegram environment configured', (getenv('TELEGRAM_BOT_TOKEN') ?: '') !=
 try {
     $db = oem_db();
     check('Writable private order storage', true);
-    oem_rate($db);
-    check('Current BTC/USD rate available', true);
+    oem_rate($db, true);
+    check('Live Coinbase BTC/USD request succeeded (cache bypassed)', true);
 } catch (Throwable $error) {
     check('Storage and live pricing ready (check local configuration)', false);
 }

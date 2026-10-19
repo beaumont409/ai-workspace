@@ -60,7 +60,8 @@ try {
     $getQuote = $db->prepare('SELECT * FROM quotes WHERE id = ?');
     $getQuote->execute([$quoteId]);
     $quote = $getQuote->fetch();
-    if (!is_array($quote) || $quote['service'] !== $service
+    if (!isset($_SESSION['quotes'][$quoteId])
+        || !is_array($quote) || $quote['service'] !== $service
         || $quote['created_at'] < time() - 86400) {
         reply(409, 'Your quote could not be found. Return to checkout. If you already paid, keep your transaction ID and do not pay again.');
     }
