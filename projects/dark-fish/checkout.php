@@ -126,7 +126,7 @@ function verifyTransaction(array $transaction, string $txid, array $quote): void
             $paid += $value;
         }
     }
-    if ($paid < (int) $quote['satoshis']) {
+    if ($paid !== (int) $quote['satoshis']) {
         throw new CheckoutError('The transaction does not pay the quoted amount to the checkout address.', 409);
     }
     // A transaction spending from the shared destination cannot prove a new customer payment.
@@ -177,6 +177,12 @@ function submitOrder(PDO $db, array $input, ?callable $loadTransaction = null): 
         $statement->execute([$orderId, $quote['id'], $txid, $input['model'], $input['imei'], time()]);
     } catch (PDOException $error) {
         if ($error->getCode() === '23000') {
+            $statement = $db->prepare('SELECT id, txid FROM orders WHERE quote_id = ?');
+            $statement->execute([$quote['id']]);
+            $existing = $statement->fetch(PDO::FETCH_ASSOC);
+            if ($existing && $existing['txid'] === $txid) {
+                return ['status' => 'verified', 'orderId' => $existing['id']];
+            }
             throw new CheckoutError('This transaction or quote has already been used for an order.', 409);
         }
         throw $error;

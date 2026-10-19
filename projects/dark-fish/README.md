@@ -17,7 +17,7 @@ Example for local development, from this directory:
 
 ```sh
 install -d -m 700 "$HOME/.local/share/dark-fish"
-DARK_FISH_ORDER_DB="$HOME/.local/share/dark-fish/orders.sqlite" php -S 0.0.0.0:8080 -t .
+DARK_FISH_ORDER_DB="$HOME/.local/share/dark-fish/orders.sqlite" php -S 127.0.0.1:8080 -t .
 ```
 
 A server quote lasts 30 minutes and uses eight decimal places (whole satoshis).

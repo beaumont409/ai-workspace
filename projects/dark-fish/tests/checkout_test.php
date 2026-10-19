@@ -65,8 +65,19 @@ try {
     $bad = $transaction;
     $bad['vout'][0]['value'] = 49999;
     rejects(fn () => verifyTransaction($bad, $txid, $quote), 409);
+    $bad['vout'][0]['value'] = 50001;
+    rejects(fn () => verifyTransaction($bad, $txid, $quote), 409);
     $bad['vout'][0]['value'] = -1;
     rejects(fn () => verifyTransaction($bad, $txid, $quote), 503);
+    $split = $transaction;
+    $split['vout'] = [
+        ['scriptpubkey_address' => BTC_ADDRESS, 'value' => 20000],
+        ['scriptpubkey_address' => BTC_ADDRESS, 'value' => 30000],
+        ['scriptpubkey_address' => 'another-address', 'value' => 10000],
+    ];
+    verifyTransaction($split, $txid, $quote);
+    $split['vout'][] = ['scriptpubkey_address' => BTC_ADDRESS, 'value' => 1];
+    rejects(fn () => verifyTransaction($split, $txid, $quote), 409);
     $bad = $transaction;
     $bad['vout'][0]['scriptpubkey_address'] = 'wrong-address';
     rejects(fn () => verifyTransaction($bad, $txid, $quote), 409);
@@ -96,6 +107,30 @@ try {
     $insert->execute([$secondQuoteId, 'bootloader', 50000, $now - 10, $now + 1800]);
     rejects(fn () => submitOrder($db, array_replace($input, ['quoteId' => $secondQuoteId]), fn () => $transaction), 409);
     check((int) $db->query('SELECT COUNT(*) FROM orders')->fetchColumn() === 1, 'Transaction cannot be reused for a different quote');
+
+    // Insert a competing order after the initial lookup, before submitOrder inserts.
+    foreach ([true, false] as $sameTransaction) {
+        $raceQuoteId = str_repeat($sameTransaction ? 'd' : 'e', 64);
+        $raceTxid = str_repeat($sameTransaction ? 'f' : '1', 64);
+        $insert->execute([$raceQuoteId, 'frp', 50000, $now - 10, $now + 1800]);
+        $raceInput = array_replace($input, ['quoteId' => $raceQuoteId, 'txid' => $raceTxid]);
+        $raceTransaction = array_replace($transaction, ['txid' => $raceTxid]);
+        $existingId = 'existing-' . $raceQuoteId;
+        $loadTransaction = function () use ($db, $existingId, $raceQuoteId, $raceTxid, $sameTransaction, $raceTransaction, $now): array {
+            $statement = $db->prepare('INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)');
+            $statement->execute([$existingId, $raceQuoteId, $sameTransaction ? $raceTxid : str_repeat('2', 64), 'Other Phone', 'OTHER-SERIAL', $now]);
+            return $raceTransaction;
+        };
+        if ($sameTransaction) {
+            $retried = submitOrder($db, $raceInput, $loadTransaction);
+            check($retried === ['status' => 'verified', 'orderId' => $existingId], 'Insert conflict returns the matching order');
+        } else {
+            rejects(fn () => submitOrder($db, $raceInput, $loadTransaction), 409);
+        }
+        $statement = $db->prepare('SELECT COUNT(*) FROM orders WHERE quote_id = ?');
+        $statement->execute([$raceQuoteId]);
+        check((int) $statement->fetchColumn() === 1, 'Insert conflict does not duplicate orders');
+    }
 } finally {
     unset($db, $insert);
     foreach (glob($directory . '/*') as $file) unlink($file);

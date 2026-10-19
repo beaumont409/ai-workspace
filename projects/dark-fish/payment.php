@@ -46,8 +46,16 @@
 
     <script>
         const btcAddress = <?= json_encode(BTC_ADDRESS) ?>;
+        const service = new URLSearchParams(window.location.search).get('service');
+        const quoteStorageKey = 'dark-fish-quote:' + service;
         let quote = null;
         let quoteTimer;
+
+        function validQuote(data) {
+            return data && Number.isSafeInteger(data.satoshis) && data.satoshis > 0 && data.satoshis <= 2100000000000000 &&
+                typeof data.quoteId === 'string' && /^[a-f0-9]{64}$/.test(data.quoteId) &&
+                Number.isSafeInteger(data.expiresAt) && data.expiresAt > 0;
+        }
 
         async function copyAddress() {
             try {
@@ -59,7 +67,6 @@
         }
 
         async function updateAmount() {
-            const service = new URLSearchParams(window.location.search).get('service');
             const button = document.getElementById('submit-btn');
             const status = document.getElementById('quote-status');
             button.disabled = true;
@@ -78,25 +85,38 @@
                 usdAmount = 30.00;
             }
             try {
-                const response = await fetch('api.php?action=quote&service=' + encodeURIComponent(service), { cache: 'no-store' });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Quote request failed.');
-                if (!Number.isSafeInteger(data.satoshis) || data.satoshis <= 0 || data.satoshis > 2100000000000000 ||
-                    typeof data.quoteId !== 'string' || !/^[a-f0-9]{64}$/.test(data.quoteId) ||
-                    !Number.isSafeInteger(data.expiresAt) || data.expiresAt * 1000 <= Date.now()) {
-                    throw new Error('A valid Bitcoin quote is unavailable.');
+                let savedQuote;
+                try {
+                    savedQuote = JSON.parse(localStorage.getItem(quoteStorageKey));
+                } catch (err) {}
+                if (savedQuote && savedQuote.service === service && validQuote(savedQuote)) {
+                    quote = savedQuote;
+                } else {
+                    const response = await fetch('api.php?action=quote&service=' + encodeURIComponent(service), { cache: 'no-store' });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Quote request failed.');
+                    if (!validQuote(data) || data.expiresAt * 1000 <= Date.now()) {
+                        throw new Error('A valid Bitcoin quote is unavailable.');
+                    }
+                    quote = { ...data, service };
+                    try {
+                        localStorage.setItem(quoteStorageKey, JSON.stringify(quote));
+                    } catch (err) {}
                 }
-                quote = data;
                 document.getElementById('display-amount').textContent = (quote.satoshis / 100000000).toFixed(8) + ' BTC';
-                document.getElementById('payment-destination').hidden = false;
-                status.textContent = '$' + usdAmount + ' quote. Payment must confirm by ' +
-                    new Date(quote.expiresAt * 1000).toLocaleTimeString() + '. After sending, enter the transaction ID below.';
-                button.disabled = false;
-                clearTimeout(quoteTimer);
-                quoteTimer = setTimeout(() => {
+                const expireQuote = () => {
                     document.getElementById('payment-destination').hidden = true;
                     status.textContent = 'Quote expired. Do not send payment. If already sent, submit its transaction ID for verification.';
-                }, quote.expiresAt * 1000 - Date.now());
+                };
+                if (quote.expiresAt * 1000 <= Date.now()) {
+                    expireQuote();
+                } else {
+                    document.getElementById('payment-destination').hidden = false;
+                    status.textContent = '$' + usdAmount + ' quote. Payment must confirm by ' +
+                        new Date(quote.expiresAt * 1000).toLocaleTimeString() + '. After sending, enter the transaction ID below.';
+                    quoteTimer = setTimeout(expireQuote, quote.expiresAt * 1000 - Date.now());
+                }
+                button.disabled = false;
             } catch (err) {
                 document.getElementById('display-amount').textContent = 'Unavailable';
                 status.textContent = err.message;
@@ -127,6 +147,9 @@
                 document.getElementById('quote-status').textContent = 'Payment verified.';
                 status.textContent = 'Payment verified. Order ' + data.orderId + ' has been recorded.';
                 button.textContent = 'PAYMENT VERIFIED';
+                try {
+                    localStorage.removeItem(quoteStorageKey);
+                } catch (err) {}
                 quote = null;
             } catch (err) {
                 status.textContent = err.message;

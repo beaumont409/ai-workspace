@@ -34,7 +34,9 @@
         </footer></div>
 
     <script>
+        let priceRequestId = 0;
         async function updateBTC() {
+            const requestId = ++priceRequestId;
             const buttons = document.querySelectorAll('.buy-btn');
             buttons.forEach(button => { button.disabled = true; });
             try {
@@ -50,10 +52,12 @@
                     throw new Error('Invalid BTC quote');
                 }
                 const [bootloaderBTC, frpBTC] = amounts.map(amount => (amount / 100000000).toFixed(8));
+                if (requestId !== priceRequestId) return;
                 document.getElementById('btc-bootloader').textContent = bootloaderBTC;
                 document.getElementById('btc-frp').textContent = frpBTC;
                 buttons.forEach(button => { button.disabled = false; });
             } catch (err) {
+                if (requestId !== priceRequestId) return;
                 document.getElementById('btc-bootloader').textContent = 'Unavailable';
                 document.getElementById('btc-frp').textContent = 'Unavailable';
                 console.error('Failed to fetch BTC price', err);
