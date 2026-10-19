@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   <title>O.E.M. Unlocks</title>    <style>
+        :root { --bg: #0a0a0a; --card: #141414; --accent: #c6ff1a; --text: #ffffff; --text-dim: #888; --line: #222; }
+        body{ background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }      header { text-align: center; margin-bottom: 40px; }
+        .logo {font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--accent); }
+        .container { max-width: 600px; margin: 0 auto; }
+        .service-card { background: var(--card); border: 1px solid var(--line); padding: 24px; border-radius: 12px; margin-bottom: 16px; }    .service-name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }     .price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+        .usd-price { font-size: 24px; font-weight: 700; color: var(--accent); }  .btc-price { font-size: 14px; color: var(--text-dim); }
+        .buy-btn { width: 100%; padding: 14px; background: var(--accent); color:#000; border: none; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.2s; }       .buy-btn:active { transform: scale(0.98); }
+        .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">   <header>
+            <div class="logo">O.E.M. UNLOCKS</div>    <p style="color: var(--text-dim)">Fast, secure, and permanent device unlocking.</p>
+        </header>
+
+        <div class="service-card">           <div class="service-name">Bootloader Unlock</div>  <div class="price-row">           <span class="usd-price">$45.00</span>           <span class="btc-price">≈ <span id="btc-bootloader">---</span> BTC</span>
+            </div>
+            <button class="buy-btn" disabled onclick="location.href='payment.php?service=bootloader'">BUY NOW</button>
+        </div>
+
+        <div class="service-card">
+            <div class="service-name">FRP Removal</div>           <div class="price-row">
+                <span class="usd-price">$30.00</span>
+                <span class="btc-price">≈ <span id="btc-frp">---</span> BTC</span>      </div>
+            <button class="buy-btn" disabled onclick="location.href='payment.php?service=frp'">BUYNOW</button>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 12px;">      &copy; 2026 O.E.M. Unlocks. All rights reserved.
+        </footer></div>
+
+    <script>
+        let priceRequestId = 0;
+        async function updateBTC() {
+            const requestId = ++priceRequestId;
+            const buttons = document.querySelectorAll('.buy-btn');
+            buttons.forEach(button => { button.disabled = true; });
+            try {
+                const response = await fetch('api.php?action=price', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Price request failed');
+                const data = await response.json();
+                const btcPrice = data.btcUsd;
+                if (typeof btcPrice !== 'number' || !Number.isFinite(btcPrice) || btcPrice <= 0) {
+                    throw new Error('Invalid BTC price');
+                }
+                const amounts = [45, 30].map(usd => Math.ceil(usd / btcPrice * 100000000));
+                if (amounts.some(amount => !Number.isSafeInteger(amount) || amount <= 0 || amount > 2100000000000000)) {
+                    throw new Error('Invalid BTC quote');
+                }
+                const [bootloaderBTC, frpBTC] = amounts.map(amount => (amount / 100000000).toFixed(8));
+                if (requestId !== priceRequestId) return;
+                document.getElementById('btc-bootloader').textContent = bootloaderBTC;
+                document.getElementById('btc-frp').textContent = frpBTC;
+                buttons.forEach(button => { button.disabled = false; });
+            } catch (err) {
+                if (requestId !== priceRequestId) return;
+                document.getElementById('btc-bootloader').textContent = 'Unavailable';
+                document.getElementById('btc-frp').textContent = 'Unavailable';
+                console.error('Failed to fetch BTC price', err);
+            }
+        }
+        updateBTC();
+        setInterval(updateBTC, 60000);
+    </script>
+</body>
+</html>
