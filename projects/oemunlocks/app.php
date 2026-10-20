@@ -26,8 +26,10 @@ function oem_session(): void
     if (session_status() !== PHP_SESSION_ACTIVE) {
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
+        ini_set('session.gc_maxlifetime', '90000');
         session_name('oem_session');
         session_set_cookie_params([
+            'lifetime' => 86400,
             'httponly' => true,
             // Only the disposable built-in HTTP test server may opt out.
             'secure' => PHP_SAPI !== 'cli-server' || getenv('OEM_TEST_HTTP') !== '1'

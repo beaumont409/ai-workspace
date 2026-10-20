@@ -345,7 +345,8 @@ pushes only if the test and syntax commands pass. `set -e` prevents later lint
 success from masking test failure. Publishing source does not authorize deployment.
 
 ```bash
-set -e
+set -eu
+oem_fix_sha=$(git rev-parse HEAD)
 unset OEM_TEST_ROOT PHP_COMMAND
 python3 tests/quote_regression.py
 python3 tests/integration.py
