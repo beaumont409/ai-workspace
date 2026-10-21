@@ -1,0 +1,1 @@
+Build only inside this project. Never read or copy credentials. Never deploy, push, edit parent paths, or start Telegram polling. Run meaningful checks. Write claw-validation.json as {"checks":[{"argv":["program","arg"],"purpose":"description"}]}. Checks must be noninteractive and offline. Do not use secrets.

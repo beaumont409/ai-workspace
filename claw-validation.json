@@ -1,0 +1,1 @@
+{"checks":[{"argv":["npm","test"],"purpose":"Run offline normalization, health, formatting, request failure and timeout tests using local fixtures"},{"argv":["npm","run","check"],"purpose":"Check JavaScript syntax for the browser application, API adapter and local server"}]}

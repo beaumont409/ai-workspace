@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101719">
+  <title>Triangle / System status</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar"><a href="./" class="brand" aria-label="Triangle status home"><span class="logo">△</span> TRIANGLE<span class="brand-sub"> / STATUS</span></a><span class="environment"><span class="dot"></span> PUBLIC MONITOR</span></header>
+    <main>
+      <div class="intro"><div><p class="eyebrow">INFRASTRUCTURE OVERVIEW</p><h1>System status<span>.</span></h1><p class="subtitle">A live look at the services that keep things running.</p></div><button id="refresh" type="button"><span id="refresh-icon" aria-hidden="true">↻</span> <span id="refresh-label">Refresh status</span></button></div>
+      <div id="notice" class="notice" role="alert" hidden></div>
+      <section class="health-panel" aria-labelledby="health-heading" aria-busy="true" id="dashboard">
+        <div class="health-icon" id="health-icon" aria-hidden="true">⋯</div><div class="health-copy"><p class="eyebrow">CURRENT HEALTH</p><h2 id="health-heading">Connecting to systems</h2><p id="health-detail">Waiting for the first status update.</p></div><span class="live-label" id="live-label">CONNECTING</span>
+      </section>
+      <div class="section-heading"><h2>Resource overview</h2><span>HOST METRICS <span class="tiny-dot">·</span> LIVE SNAPSHOT</span></div>
+      <section class="metrics" aria-label="Host resource metrics">
+        <article class="metric"><div class="metric-top"><span>CPU usage</span><span class="metric-icon" aria-hidden="true">▤</span></div><div class="value" id="cpu-value">—</div><div class="meter" id="cpu-meter" role="progressbar" aria-label="CPU usage" aria-valuemin="0" aria-valuemax="100"><span></span></div><p id="cpu-detail">Waiting for data</p></article>
+        <article class="metric"><div class="metric-top"><span>Memory</span><span class="metric-icon" aria-hidden="true">▥</span></div><div class="value" id="ram-value">—</div><div class="meter" id="ram-meter" role="progressbar" aria-label="Memory usage" aria-valuemin="0" aria-valuemax="100"><span></span></div><p id="ram-detail">Waiting for data</p></article>
+        <article class="metric"><div class="metric-top"><span>Disk usage</span><span class="metric-icon" aria-hidden="true">▱</span></div><div class="value" id="disk-value">—</div><div class="meter" id="disk-meter" role="progressbar" aria-label="Disk usage" aria-valuemin="0" aria-valuemax="100"><span></span></div><p id="disk-detail">Waiting for data</p></article>
+        <article class="metric uptime"><div class="metric-top"><span>System uptime</span><span class="metric-icon" aria-hidden="true">◷</span></div><div class="value" id="uptime-value">—</div><div class="uptime-line" aria-hidden="true"></div><p id="uptime-detail">Time since last restart</p></article>
+      </section>
+      <section class="services" aria-labelledby="services-heading"><div class="services-header"><div><h2 id="services-heading">Services</h2><p>Availability across monitored services</p></div><span class="count" id="service-count">— SERVICES</span></div><div id="service-list"><p class="empty">Loading service health…</p></div></section>
+      <div class="update-row" role="status" aria-live="polite"><span id="updated">Waiting for first update</span><span>Auto-refresh <strong>60s</strong></span></div>
+    </main>
+    <footer><span><span class="footer-mark">△</span> TRIANGLE <span class="muted">Infrastructure, at a glance.</span></span><a href="https://status.triangle250r.com/api/status" target="_blank" rel="noopener noreferrer">View status API ↗</a></footer>
+  </div>
+</body>
+</html>
