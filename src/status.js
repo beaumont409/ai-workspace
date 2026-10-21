@@ -1,9 +1,9 @@
-export const API_URL = 'https://status.triangle250r.com/api/status';
+export const API_URL = '/api/status';
 
 const pick = (...values) => values.find(value => value !== undefined && value !== null);
 const number = value => (typeof value === 'number' || (typeof value === 'string' && value.trim() !== '')) && Number.isFinite(Number(value)) ? Number(value) : null;
 export function percent(value) {
-  const n = number(typeof value === 'string' ? value.replace(/%$/, '') : value);
+  const n = number(typeof value === 'string' ? value.trim().replace(/%$/, '') : value);
   return n === null || n < 0 || n > 100 ? null : n;
 }
 export function health(value) {
@@ -26,16 +26,25 @@ export function normalizeStatus(payload) {
   const data = payload.data && typeof payload.data === 'object' ? payload.data : payload;
   const system = data.system ?? data.metrics ?? data;
   const rawServices = data.services;
-  const services = Array.isArray(rawServices) ? rawServices.map((s, i) => typeof s === 'object' && s !== null ? { name: String(s.name ?? s.service ?? `Service ${i + 1}`), status: health(pick(s.status, s.healthy, s.online)), description: String(s.description ?? '') } : { name: String(s), status: 'unknown', description: '' }) : rawServices && typeof rawServices === 'object' ? Object.entries(rawServices).map(([name, s]) => ({ name, status: health(typeof s === 'object' && s !== null ? pick(s.status, s.healthy, s.online) : s), description: String(s?.description ?? '') })) : [];
+  let services = Array.isArray(rawServices) ? rawServices.map((s, i) => typeof s === 'object' && s !== null ? { name: String(s.name ?? s.service ?? `Service ${i + 1}`), status: health(pick(s.status, s.healthy, s.online)), description: String(s.description ?? '') } : { name: String(s), status: 'unknown', description: '' }) : rawServices && typeof rawServices === 'object' ? Object.entries(rawServices).map(([name, s]) => ({ name, status: health(typeof s === 'object' && s !== null ? pick(s.status, s.healthy, s.online) : s), description: String(s?.description ?? '') })) : [];
+  const rootNames = ['k2', 'kuma', 'mariadb', 'n8n', 'nginx', 'openclaw'];
+  if (rootNames.some(name => Object.hasOwn(data, name))) {
+    services = rootNames.map(name => ({ name, status: typeof data[name] === 'boolean' ? health(data[name]) : 'unknown', description: '' }));
+  }
+  const containers = data.containers && typeof data.containers === 'object' && !Array.isArray(data.containers)
+    ? Object.entries(data.containers).map(([name, raw]) => {
+      const c = raw && typeof raw === 'object' ? raw : {};
+      return { name, state: typeof c.state === 'string' ? c.state : null, status: health(c.state), cpu: percent(c.cpu), memory: typeof c.memory === 'string' || typeof c.memory === 'number' ? c.memory : null, memory_percent: percent(c.memory_percent) };
+    }) : [];
   const cpu = usage(pick(system.cpu, system.cpu_usage, system.cpu_percent));
   const ram = usage(pick(system.ram, system.memory, system.memory_usage, system.ram_usage));
   const disk = usage(pick(system.disk, system.disk_usage));
-  const rawUptime = pick(system.uptime, system.uptime_seconds, data.uptime);
+  const rawUptime = pick(number(system.uptime_hours) !== null && number(system.uptime_hours) >= 0 ? number(system.uptime_hours) * 3600 : undefined, system.uptime, system.uptime_seconds, data.uptime);
   const uptime = typeof rawUptime === 'string' && number(rawUptime) === null ? rawUptime : number(rawUptime);
   const explicit = health(pick(data.status, data.health, data.healthy));
   const overall = services.some(s => s.status === 'down') ? 'down' : services.some(s => s.status === 'degraded') ? 'degraded' : explicit !== 'unknown' ? explicit : services.length && services.every(s => s.status === 'healthy') ? 'healthy' : 'unknown';
-  if (!services.length && [cpu.percent, ram.percent, disk.percent, uptime].every(v => v === null) && explicit === 'unknown') throw new Error('The API response contains no recognized status data.');
-  return { overall, cpu, ram, disk, uptime, services };
+  if (!services.length && !containers.length && [cpu.percent, ram.percent, disk.percent, uptime].every(v => v === null) && explicit === 'unknown') throw new Error('The API response contains no recognized status data.');
+  return { overall, cpu, ram, disk, uptime, services, containers };
 }
 export function formatUptime(value) {
   if (value === null || value === undefined || (typeof value === 'number' && value < 0)) return 'Unavailable';

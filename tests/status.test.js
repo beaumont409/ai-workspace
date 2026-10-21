@@ -42,3 +42,23 @@ test('reports HTTP, network and malformed JSON failures', async () => {
 test('aborts stalled requests', async () => {
   await assert.rejects(fetchStatus((_url, { signal }) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('Timeout', 'AbortError')))), 5), { name: 'AbortError' });
 });
+
+test('actual schema uses hours, root booleans and keyed containers without inventing missing states', () => {
+  const data = normalizeStatus({ cpu: 12.5, ram: 35, disk: 62, uptime_hours: 25.5, k2: true, kuma: false, mariadb: true, n8n: true, nginx: true, openclaw: true, containers: { web: { state: 'running', cpu: 2.5, memory: '32MiB', memory_percent: 1.2 }, worker: { state: 'restarting' }, absent: {} } });
+  assert.equal(API_URL, '/api/status');
+  assert.equal(data.uptime, 91800); assert.equal(formatUptime(data.uptime), '1d 1h');
+  assert.equal(data.ram.percent, 35); assert.equal(data.disk.percent, 62);
+  assert.equal(data.services.length, 6); assert.equal(data.services[1].status, 'down');
+  assert.equal(data.containers[0].memory, '32MiB'); assert.equal(data.containers[0].cpu, 2.5);
+  assert.equal(data.containers[1].state, 'restarting'); assert.equal(data.containers[1].status, 'unknown');
+  assert.equal(data.containers[2].state, null); assert.equal(data.containers[2].cpu, null);
+  const missing = normalizeStatus({ cpu: 0, k2: true });
+  assert.equal(missing.services[1].status, 'unknown'); assert.equal(missing.overall, 'unknown');
+});
+
+test('container CPU accepts percentages and preserves unavailable values', () => {
+  for (const [input, expected] of [['0.01%', 0.01], ['0%', 0], ['100%', 100], [' 12.5% ', 12.5], [2.5, 2.5], ['2.5', 2.5], [undefined, null], [null, null], ['', null], ['%', null], ['garbage', null], ['0.01%%', null], ['12%junk', null], ['-1%', null], ['101%', null], [Infinity, null], [true, null]]) {
+    const data = normalizeStatus({ containers: { worker: { cpu: input } } });
+    assert.equal(data.containers[0].cpu, expected, `CPU ${String(input)}`);
+  }
+});

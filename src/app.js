@@ -21,10 +21,10 @@ function render(data) {
     $(key + '-detail').textContent = metric.used !== null && metric.total !== null ? `${formatBytes(metric.used)} of ${formatBytes(metric.total)} used` : metric.percent === null ? 'Not reported by the API' : `${(100 - metric.percent).toFixed(1)}% available`;
   }
   $('uptime-value').textContent = formatUptime(data.uptime);
-  $('service-count').textContent = `${data.services.length} SERVICE${data.services.length === 1 ? '' : 'S'}`;
+  $('service-count').textContent = `${data.services.length + data.containers.length} SERVICE${data.services.length + data.containers.length === 1 ? '' : 'S'}`;
   $('service-list').replaceChildren();
-  if (!data.services.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'No individual services reported by the API.'; $('service-list').append(p); }
-  for (const service of data.services) {
+  if (!data.services.length && !data.containers.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'No individual services reported by the API.'; $('service-list').append(p); }
+  for (const service of [...data.services, ...data.containers.map(c => ({ name: c.name, status: c.status, description: `State: ${c.state ?? 'Unknown'} · CPU: ${c.cpu === null ? 'Unknown' : c.cpu + '%'} · Memory: ${c.memory ?? 'Unknown'} (${c.memory_percent === null ? 'Unknown' : c.memory_percent + '%'})` }))]) {
     const row = document.createElement('div'); row.className = 'service-row';
     const name = document.createElement('div'); name.className = 'service-name'; name.textContent = service.name;
     if (service.description) { const description = document.createElement('small'); description.textContent = service.description; name.append(description); }
@@ -40,7 +40,7 @@ async function refresh() {
     $('updated').textContent = `Last updated ${lastSuccess.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
   } catch (error) {
     $('notice').hidden = false;
-    $('notice').textContent = `${lastSuccess ? 'Refresh failed. Displaying the last successful snapshot. ' : 'Unable to load system status. '}Check your connection and try Refresh. ${error.name === 'AbortError' ? 'The request timed out.' : error instanceof TypeError ? 'The API may be unreachable or may not allow browser requests (CORS).' : error.message}`;
+    $('notice').textContent = `${lastSuccess ? 'Refresh failed. Displaying the last successful snapshot. ' : 'Unable to load system status. '}Check your connection and try Refresh. ${error.name === 'AbortError' ? 'The request timed out.' : error instanceof TypeError ? 'The local status endpoint is unreachable.' : error.message}`;
     $('live-label').textContent = lastSuccess ? 'STALE DATA' : 'CONNECTION ERROR';
     if (!lastSuccess) {
       $('dashboard').dataset.health = 'unknown'; $('health-icon').textContent = '?'; $('health-heading').textContent = 'Status currently unavailable'; $('health-detail').textContent = 'A connection error does not indicate a service outage.';

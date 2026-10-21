@@ -1,1 +1,38 @@
-{"checks":[{"argv":["npm","test"],"purpose":"Run offline normalization, health, formatting, request failure and timeout tests using local fixtures"},{"argv":["npm","run","check"],"purpose":"Check JavaScript syntax for the browser application, API adapter and local server"}]}
+{
+  "checks": [
+    {
+      "argv": [
+        "npm",
+        "test"
+      ],
+      "purpose": "Offline dashboard normalization, rendering, and same-origin proxy regressions"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "purpose": "Dashboard JavaScript syntax checks"
+    },
+    {
+      "argv": [
+        "gitleaks",
+        "protect",
+        "--staged",
+        "--redact",
+        "--no-banner"
+      ],
+      "purpose": "Offline secret scan of staged dashboard changes"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "purpose": "Check staged patch whitespace"
+    }
+  ]
+}
