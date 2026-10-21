@@ -1,0 +1,1 @@
+{"checks":[{"argv":["python3","-m","unittest","discover","-s","tests","-v"],"purpose":"Verify arithmetic, invalid input, overflow, and command-line behavior offline."}]}
