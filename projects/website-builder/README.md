@@ -26,7 +26,8 @@ website-builder/
 ```
 
 ## Features
-- **4 Visual Themes**: Luxury (black/gold), Cyberpunk (black/laser-green), Modern (blue/white), Business (professional gray/blue)
+- **5 Visual Themes**: Luxury (black/gold), Cyberpunk (black/laser-green), Modern (blue/white), Business (professional gray/blue), Electric Blue Hyperrealistic 3D
+- **Optional Qwen Colab provider**: Staging-only adapter for authenticated Qwen inference on a Google Colab Tesla T4. The existing template provider remains the default. See [`docs/QWEN_COLAB.md`](docs/QWEN_COLAB.md); no Colab endpoint is currently configured.
 - **Mobile-Responsive**: Fully responsive navigation, grid layouts, and touch-friendly elements
 - **Smooth Animations**: Scroll-triggered reveals, hover effects, glowing buttons
 - **GitHub Integration**: Version control ready with `.gitignore` for secrets
@@ -45,7 +46,7 @@ python3 -m http.server 8080
 ```
 
 ## Theme Switching
-Click the theme toggle button in the navigation bar to cycle through all 4 themes.
+Click the theme toggle button in the navigation bar to cycle through all 5 themes.
 Each theme changes colors, fonts, and visual styling without altering content.
 
 ## Design Specifications
