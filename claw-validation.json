@@ -1,0 +1,1 @@
+{"checks":[{"argv":["python3","-m","unittest","discover","-s","tests","-v"],"purpose":"Confirm that the synthetic test project's README.md exists using an offline, noninteractive automated check."}]}
