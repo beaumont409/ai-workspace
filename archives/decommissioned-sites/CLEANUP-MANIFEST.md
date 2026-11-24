@@ -254,3 +254,21 @@ These were identified by name and size. They are not deletion candidates until t
 - `/root/oemunlocks-service-backup-20261112T153944774238Z` — 63,684 logical bytes / 73,728 allocated bytes; temporary or backup candidate, content review required.
 - `/root/oemunlocks-telegram-backup-20261112T173200769328Z` — 242 logical bytes / 8,192 allocated bytes; temporary or backup candidate, content review required.
 - `/root/oemunlocks-wallet-backup-20261112T171119777182Z` — 68,553 logical bytes / 77,824 allocated bytes; temporary or backup candidate, content review required.
+
+## Continuation evidence — 2026-11-24
+
+The archive commit `8f4ef296ed7dcdf2311a845701861569617da1e2` was rechecked locally: branch `archive/decommission-sites-20261124`, all per-site SHA256 entries pass, and a fresh redacted gitleaks scan reports zero findings. Pushing the branch again failed before authentication because this environment could not resolve `github.com`. No remote branch, remote commit, or remote directory verification is claimed.
+
+Fresh read-only runtime checks returned:
+
+- `systemctl list-units --type=service --all` and `systemctl list-timers --all`: blocked by `Failed to connect to bus: Operation not permitted`; dedicated unit/timer active state and dependencies remain unverified.
+- `docker ps -a` and `docker volume ls`: blocked by permission denied on `/var/run/docker.sock`; no live container/volume conclusions are possible.
+- `nginx -T`: failed config validation because `oemunlocks.com` could not resolve in the existing protected website-builder preview proxy at `/etc/nginx/sites-enabled/website-builder.preview:175`. That preview also uses `/var/www/preview.triangle250r.com`; retain it and the shared vhost. This is a dependency requiring owner/host review before considering OEM upstream removal.
+- Nginx inventory still includes active Blueprint vhost/certificate references, OEM vhost files, protected Designer Luxury and Super Grade A Watches vhosts, and Triangle250r status/n8n routes. `/var/www/html` remains shared and excluded. Do not change any Nginx configuration as part of this plan.
+- Current `df -P` reports 59,848,952 KB total, 53,890,988 KB used, 5,941,580 KB available (91%). No removal occurred; realized recovery remains 0 bytes.
+
+Mixed backup review used paths and filesystem metadata only; database and secret contents were not opened. The mixed backup roots occupy substantial shared space and contain protected application data. A path filter found 1,334 accessible files in site-specific-looking backup subpaths (41,852,928 allocated bytes); overlap, shared snapshot structure, sensitive content, and incomplete access mean this is **not** a safe deletion total and is excluded from the conditional reclaim estimate. `du` on `/root/backups` reported permission errors for protected n8n and preview data, so its aggregate is incomplete. Preserve every shared backup tree; only individually reviewed, encrypted-preserved site artifacts could later be considered.
+
+Sensitive archive preparation: keep payment/database files, `.env` files, tokens, wallet material, and TLS private keys out of Git. An existing root-only backup password file and rclone configuration are present; `gpg` and `openssl` are available, while `age` is unavailable. No encrypted copy was created because the approved encryption recipient/retention target and restore procedure have not been verified. Before deletion approval, use the established encrypted backup path only after confirming encryption mode, access controls, integrity, and isolated restore; verify a recoverable encrypted copy for each sensitive item without exposing plaintext or uploading it to GitHub.
+
+The 29,589,504-byte (28.22 MiB) estimate remains the conditional allocated-space ceiling for only the explicitly enumerated candidates from the prior inventory. It excludes these mixed backup paths, unreviewed development/worktree trees, inaccessible Docker resources, and any unverified dependencies. Filesystem block release may differ; actual disk recovery is zero until deletion is separately approved and performed.
