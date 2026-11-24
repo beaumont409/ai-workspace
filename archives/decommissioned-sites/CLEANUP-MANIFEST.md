@@ -105,7 +105,7 @@ All candidates require explicit approval. Active runtime trees also require veri
 | Sensitive historical backup file | `/root/server-blueprint-backups/var__www__oemunlocks__payment.php.20261026-132621.bak` | 1 | 6,794 | 8,192 | Separate encrypted archive first; database/customer or token-bearing payment content |
 | Sensitive historical backup file | `/root/server-blueprint-backups/oemunlocks-payments-20261025T220545Z.sqlite3` | 1 | 53,248 | 53,248 | Separate encrypted archive first; database/customer or token-bearing payment content |
 
-**Conditional upper estimate for the explicitly listed candidates above: 29,589,504 allocated bytes (28.22 MiB), across 1,752 filesystem entries.** This includes runtime directories, config/certificate files, and sensitive backups that are not eligible for deletion until prerequisites are met. It excludes unreviewed temporary worktrees and full disaster-recovery snapshots.
+**Conditional upper estimate for the explicitly listed candidates above: 29,052,928 allocated bytes (27.70 MiB) of potentially releasable blocks, based on the current unique inode allocation and excluding blocks with links outside the candidate set.** This includes runtime directories, config/certificate files, and sensitive backups that are not eligible for deletion until prerequisites are met. It excludes unreviewed temporary worktrees and full disaster-recovery snapshots.
 
 ## Sensitive material: separate encrypted archival only
 
@@ -271,4 +271,8 @@ Mixed backup review used paths and filesystem metadata only; database and secret
 
 Sensitive archive preparation: keep payment/database files, `.env` files, tokens, wallet material, and TLS private keys out of Git. An existing root-only backup password file and rclone configuration are present; `gpg` and `openssl` are available, while `age` is unavailable. No encrypted copy was created because the approved encryption recipient/retention target and restore procedure have not been verified. Before deletion approval, use the established encrypted backup path only after confirming encryption mode, access controls, integrity, and isolated restore; verify a recoverable encrypted copy for each sensitive item without exposing plaintext or uploading it to GitHub.
 
-The 29,589,504-byte (28.22 MiB) estimate remains the conditional allocated-space ceiling for only the explicitly enumerated candidates from the prior inventory. It excludes these mixed backup paths, unreviewed development/worktree trees, inaccessible Docker resources, and any unverified dependencies. Filesystem block release may differ; actual disk recovery is zero until deletion is separately approved and performed.
+A fresh filesystem walk of the 87 explicitly listed candidate paths found 1,993 unique inodes using 29,556,736 allocated bytes. 123 inodes (503,808 allocated bytes) have hard links outside the candidate set, so the calculated ceiling potentially freed by removing all listed paths is 29,052,928 allocated bytes (27.70 MiB). This is still conditional: unverified dependencies, open file handles, metadata, and concurrent writes can reduce actual space returned. It excludes mixed backup paths, unreviewed development/worktree trees, and inaccessible Docker resources. Actual disk recovery remains zero until deletion is separately approved and performed.
+
+### Allocated-space reconciliation
+
+The previous estimate summed path-level allocations and overstated recoverable space where hard-linked data also exists outside the candidate set. The current bound counts unique candidate inodes and excludes those external links. This remains a filesystem allocation estimate, not measured post-deletion free space.
