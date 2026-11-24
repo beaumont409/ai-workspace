@@ -1,0 +1,13 @@
+[Unit]
+Description=Dedicated OEM production PHP-FPM
+After=network.target
+[Service]
+Type=simple
+RuntimeDirectory=oemunlocks-fpm
+RuntimeDirectoryMode=0755
+EnvironmentFile=/etc/oemunlocks-production/production.env
+ExecStart=/usr/sbin/php-fpm8.3 -F -y /etc/oemunlocks-production/fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target

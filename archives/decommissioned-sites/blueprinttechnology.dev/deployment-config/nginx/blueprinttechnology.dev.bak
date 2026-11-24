@@ -1,0 +1,52 @@
+server {
+    server_name blueprinttechnology.dev www.blueprinttechnology.dev;
+    location = /1 {
+        rewrite ^ /index.php last;
+    }
+    root /var/www/html;
+    index index.html index.php;
+
+    location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+}
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/blueprinttechnology.dev/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/blueprinttechnology.dev/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = www.blueprinttechnology.dev) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = blueprinttechnology.dev) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name blueprinttechnology.dev www.blueprinttechnology.dev;
+    location = /1 {
+        rewrite ^ /index.php last;
+    }
+    return 404; # managed by Certbot
+
+
+
+
+}

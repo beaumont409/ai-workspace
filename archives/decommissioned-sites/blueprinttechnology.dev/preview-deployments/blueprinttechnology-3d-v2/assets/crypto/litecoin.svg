@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="title">
+  <title id="title">Litecoin</title>
+  <circle cx="50" cy="50" r="50" fill="#345D9D"/>
+  <path fill="#fff" d="m5.734 15.611-1.609.63.776-3.116 1.62-.652L8.86 3h5.772l-1.71 6.975 1.586-.642-.765 3.083-1.598.653-.956 4.074h8.685L18.895 21H4.406z" transform="translate(20 20) scale(2.5)"/>
+</svg>

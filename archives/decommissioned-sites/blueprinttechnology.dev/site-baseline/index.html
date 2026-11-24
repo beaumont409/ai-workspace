@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030711">
+  <meta name="description" content="Blueprint Technology’s SCOREZT EXPLOIT v2.1 page presents a terminal-style bootloader status screen and a download button.">
+  <meta name="referrer" content="no-referrer">
+  <link rel="canonical" href="https://blueprinttechnology.dev/">
+  <meta http-equiv="content-security-policy" content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:;">
+  
+  <title>SCOREZT EXPLOIT v2.1 | Blueprint Technology</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #030711;
+      --panel: rgba(11, 20, 15, .76);
+      --panel-deep: rgba(4, 10, 7, .88);
+      --blue: #2878FF;
+      --blue-bright: #65B8FF;
+      --ice: #b9dcff;
+      --muted: #779080;
+      --line: rgba(40, 140, 255, .18);
+      --glow: 0 0 22px rgba(40, 120, 255, .22), 0 0 70px rgba(40, 120, 255, .08);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--void); }
+    body {
+      min-width: 320px;
+      margin: 0;
+      overflow-x: hidden;
+      color: #f3f8ff;
+      background:
+        radial-gradient(ellipse at 78% 13%, rgba(22,93,220, .22), transparent 33rem),
+        radial-gradient(ellipse at 12% 57%, rgba(0,89,220, .17), transparent 30rem),
+        var(--void);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      content: "";
+      pointer-events: none;
+      opacity: .2;
+      background-image: linear-gradient(rgba(77, 157, 255, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(77, 157, 255, .055) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+    a { color: inherit; }
+    .shell { width: min(1160px, calc(100% - 56px)); margin-inline: auto; }
+    .site-header { position: relative; z-index: 5; border-bottom: 1px solid rgba(76, 164, 255, .1); background: rgba(4, 9, 22, .7); backdrop-filter: blur(18px); }
+    .nav { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: #f4f8ff; text-decoration: none; font-size: 13px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .brand-mark { position: relative; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(40,120,255,.65); transform: rotate(45deg); box-shadow: inset 0 0 14px rgba(40,120,255,.14), 0 0 17px rgba(40,120,255,.15); }
+    .brand-mark::before { width: 11px; height: 11px; border: 2px solid var(--blue); content: ""; box-shadow: 0 0 12px var(--blue); }
+    .brand-mark span { position: absolute; color: var(--blue); font: 700 10px var(--mono); transform: rotate(-45deg); }
+    .nav-links { display: flex; align-items: center; gap: clamp(18px, 3vw, 38px); }
+    .nav-links a { color: #acbfdc; font: 600 11px var(--mono); letter-spacing: .13em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--blue-bright); }
+    .nav-status { display: inline-flex; align-items: center; gap: 9px; color: var(--blue-bright); font: 600 10px var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 10px var(--blue); animation: blink 1.8s ease-in-out infinite; }
+    .hero { position: relative; padding: clamp(68px, 9vw, 122px) 0 76px; isolation: isolate; }
+    .hero::after { position: absolute; z-index: -1; top: 8%; right: 0; width: min(70vw, 780px); aspect-ratio: 1; border-radius: 50%; content: ""; background: radial-gradient(circle, rgba(32, 112, 255, .12), transparent 68%); filter: blur(24px); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr); align-items: center; gap: clamp(34px, 6vw, 86px); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 23px; color: var(--blue-bright); font: 700 11px var(--mono); letter-spacing: .19em; text-transform: uppercase; }
+    .eyebrow::before { width: 31px; height: 1px; content: ""; background: var(--blue); box-shadow: 0 0 10px var(--blue); }
+    h1 { max-width: 690px; margin: 0; font-size: clamp(48px, 7.2vw, 88px); font-weight: 850; letter-spacing: -.075em; line-height: .94; }
+    h1 span { display: block; color: var(--blue); text-shadow: 0 0 30px rgba(40, 120, 255, .25); }
+    .hero-copy { max-width: 490px; margin: 26px 0 30px; color: #a9bddb; font-size: clamp(15px, 1.7vw, 17px); line-height: 1.75; }
+    .hero-copy strong { color: #e3f2ff; font-weight: 600; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; }
+    .action { min-height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 13px; padding: 0 22px; border: 1px solid transparent; border-radius: 5px; font: 800 12px var(--mono); letter-spacing: .1em; text-decoration: none; text-transform: uppercase; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+    .action:hover { transform: translateY(-2px); }
+    .action:focus-visible, .nav-links a:focus-visible { outline: 2px solid #c5e4ff; outline-offset: 4px; }
+    .action-primary { color: #06142c; background: var(--blue); box-shadow: 0 0 23px rgba(40,120,255,.25), inset 0 1px rgba(255,255,255,.55); }
+    .action-primary:hover { background: #bfe2ff; box-shadow: 0 0 32px rgba(40,120,255,.48); }
+    .action-primary svg { width: 17px; height: 17px; }
+    .action-secondary { border-color: rgba(113, 176, 255, .32); color: #d9eaff; background: rgba(13, 26, 58, .48); }
+    .action-secondary:hover { border-color: rgba(40,120,255,.72); box-shadow: var(--glow); }
+    .trust-line { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 29px; color: #7b90ae; font: 10px var(--mono); letter-spacing: .05em; }
+    .trust-line span { display: inline-flex; align-items: center; gap: 7px; }
+    .trust-line b { color: #65B8FF; font-weight: 500; }
+    .visual-stage { position: relative; min-width: 0; overflow: clip; perspective: 1100px; }
+    .visual-halo { position: absolute; inset: 6% 8%; border-radius: 50%; background: rgba(40,120,255,.09); filter: blur(55px); }
+    .visual-grid { position: absolute; inset: -4% -10% -7%; overflow: hidden; transform: rotateX(64deg) rotateZ(-9deg) translateY(8%); transform-origin: center bottom; opacity: .28; background-image: linear-gradient(rgba(40,120,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(40,120,255,.3) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(to top, black, transparent 90%); }
+    .holo-frame { position: relative; min-height: 448px; display: grid; place-items: center; transform: rotateY(-8deg) rotateX(4deg); transform-style: preserve-3d; animation: hover 7s ease-in-out infinite; }
+    .ring { position: absolute; width: min(92%, 425px); aspect-ratio: 1; border: 1px solid rgba(40,120,255,.33); border-radius: 50%; transform: rotateX(68deg) rotateZ(-20deg); box-shadow: 0 0 28px rgba(40,120,255,.08), inset 0 0 28px rgba(40,120,255,.07); }
+    .ring::before, .ring::after { position: absolute; inset: 12%; border: 1px dashed rgba(101,184,255,.33); border-radius: inherit; content: ""; }
+    .ring::after { inset: 26%; border-style: solid; border-color: rgba(40,120,255,.18); }
+    .ring-orbit { position: absolute; top: 50%; left: 50%; width: min(108%, 495px); aspect-ratio: 1; border: 1px solid rgba(40,120,255,.17); border-radius: 50%; transform: translate(-50%,-50%) rotateX(71deg) rotateZ(49deg); }
+    .ring-orbit::before { position: absolute; top: 9%; left: 13%; width: 9px; height: 9px; border-radius: 50%; content: ""; background: var(--blue-bright); box-shadow: 0 0 13px 4px rgba(40,120,255,.75); }
+    .core-card { position: relative; z-index: 2; width: min(82%, 355px); padding: 19px; border: 1px solid rgba(101,184,255, .36); border-radius: 12px; background: linear-gradient(145deg, rgba(11,35,72,.9), rgba(4,10,25,.92) 66%); box-shadow: 0 30px 70px rgba(0,0,0,.56), inset 0 1px rgba(255,255,255,.08), 0 0 36px rgba(40,120,255,.11); transform: translateZ(45px); backdrop-filter: blur(14px); }
+    .core-card::before { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; content: ""; pointer-events: none; background: linear-gradient(110deg, transparent 28%, rgba(191,226,255,.07) 49%, transparent 66%); transform: translateX(-100%); animation: sheen 6s ease-in-out infinite; }
+    .core-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 15px; border-bottom: 1px solid rgba(100,165,255,.13); color: #a0b5d3; font: 10px var(--mono); letter-spacing: .12em; }
+    .core-top strong { color: var(--blue-bright); font-weight: 600; }
+    .device-art { position: relative; height: 190px; display: grid; place-items: center; overflow: hidden; margin: 14px 0; border: 1px solid rgba(40,120,255,.11); border-radius: 7px; background: radial-gradient(ellipse at center, rgba(0,88,220,.22), transparent 65%), linear-gradient(rgba(40,120,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(40,120,255,.035) 1px, transparent 1px), #071327; background-size: auto, 19px 19px, 19px 19px, auto; }
+    .device-art::before { position: absolute; inset: 0; content: ""; background: linear-gradient(transparent 47%, rgba(40,120,255,.13) 50%, transparent 53%); background-size: 100% 12px; animation: scan 5s linear infinite; }
+    .chip { position: relative; width: 116px; height: 116px; display: grid; place-items: center; border: 1px solid rgba(101,184,255,.73); background: linear-gradient(145deg, rgba(20,72,146,.78), rgba(7,19,44,.95)); box-shadow: 0 0 32px rgba(40,120,255,.27), inset 0 0 28px rgba(40,120,255,.14); transform: rotateX(56deg) rotateZ(45deg); transform-style: preserve-3d; }
+    .chip::before { position: absolute; inset: 11px; border: 1px solid rgba(169,215,255,.6); content: ""; box-shadow: 0 0 17px rgba(40,120,255,.38), inset 0 0 14px rgba(40,120,255,.22); }
+    .chip::after { position: absolute; inset: -13px; border: 1px dashed rgba(70,164,255,.36); content: ""; }
+    .chip-label { color: var(--blue-bright); font: 700 14px var(--mono); letter-spacing: .02em; text-shadow: 0 0 10px rgba(40,120,255,.8); transform: rotateZ(-45deg) rotateX(-56deg); }
+    .chip-pin { position: absolute; width: 8px; height: 1px; background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+    .pin-a { top: 17px; left: -8px; box-shadow: 0 0 8px var(--blue), 0 16px var(--blue), 0 32px var(--blue), 0 48px var(--blue), 0 64px var(--blue), 0 80px var(--blue); }
+    .pin-b { right: -8px; bottom: 17px; box-shadow: 0 -16px var(--blue), 0 -32px var(--blue), 0 -48px var(--blue), 0 -64px var(--blue), 0 -80px var(--blue); }
+    .telemetry { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; color: #718779; font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .telemetry b { color: #c7dbf4; font-weight: 500; text-align: right; }
+    .telemetry .ready { color: var(--blue-bright); }
+    .float-label { position: absolute; z-index: 3; display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid rgba(101,184,255,.25); border-radius: 5px; color: #c5d9f3; background: rgba(5,13,34,.83); box-shadow: 0 12px 35px rgba(0,0,0,.4), 0 0 18px rgba(40,120,255,.08); backdrop-filter: blur(10px); font: 9px var(--mono); letter-spacing: .08em; }
+    .float-label svg { width: 15px; height: 15px; color: var(--blue); }
+    .float-label-left { top: 0; left: 2%; animation: hover 5s ease-in-out infinite reverse; }
+    .float-label-right { right: 2%; bottom: 0; animation: hover 6s ease-in-out -2s infinite; }
+    .section { padding: 38px 0 88px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+    .section-heading .eyebrow { margin-bottom: 10px; }
+    h2 { margin: 0; font-size: clamp(26px, 3.4vw, 39px); letter-spacing: -.045em; }
+    .section-note { max-width: 370px; margin: 0 0 3px; color: #8a9fbf; font: 11px/1.7 var(--mono); text-align: right; }
+    .terminal-shell { position: relative; overflow: hidden; border: 1px solid rgba(81,160,255,.24); border-radius: 10px; background: linear-gradient(125deg, rgba(12,25,54,.92), rgba(4,10,25,.94)); box-shadow: 0 24px 75px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.035); }
+    .terminal-shell::after { position: absolute; inset: 0; content: ""; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgba(112,177,255,.045) 50%, transparent 65%); transform: translateX(-100%); animation: sheen 8s ease-in-out infinite; }
+    .terminal-bar { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 20px; border-bottom: 1px solid rgba(70,145,255,.13); background: rgba(1,6,19,.34); }
+    .window-lights { display: flex; gap: 6px; }
+    .window-lights i { width: 7px; height: 7px; border: 1px solid rgba(40,120,255,.42); border-radius: 50%; background: rgba(40,120,255,.25); box-shadow: 0 0 8px rgba(40,120,255,.25); }
+    .terminal-name, .terminal-live { color: #7086a7; font: 9px var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+    .terminal-live { display: inline-flex; align-items: center; gap: 8px; color: #65B8FF; }
+    .terminal-body { display: grid; grid-template-columns: 1fr 225px; gap: 32px; padding: clamp(20px, 4vw, 37px); }
+    .terminal-output { display: grid; gap: 13px; font: clamp(11px, 1.2vw, 13px)/1.55 var(--mono); }
+    .terminal-output div { display: flex; gap: 12px; color: #a4b9d8; }
+    .terminal-output .success { color: #b9dcff; }
+    .terminal-output .ready { color: var(--blue-bright); }
+    .log-prefix { flex: 0 0 74px; color: #6486ac; }
+    .terminal-aside { display: flex; flex-direction: column; justify-content: center; gap: 11px; padding-left: 25px; border-left: 1px solid rgba(66,141,255,.16); }
+    .metric { color: #7087a7; font: 9px var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+    .metric strong { display: block; margin-top: 5px; color: #d9eaff; font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: none; }
+    .metric strong em { color: var(--blue); font-style: normal; }
+    .terminal-foot { display: flex; justify-content: space-between; gap: 15px; padding: 13px 20px; border-top: 1px solid rgba(70,145,255,.13); color: #6d82a1; font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .terminal-foot b { color: var(--blue-bright); font-weight: 500; }
+    .crypto-section { padding: 0 0 94px; scroll-margin-top: 28px; }
+    .crypto-panel { position: relative; overflow: hidden; padding: clamp(25px, 5vw, 47px); border: 1px solid rgba(77,157,255,.24); border-radius: 12px; background: linear-gradient(120deg, rgba(12,25,54,.9), rgba(5,12,29,.95)); box-shadow: 0 24px 70px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.035); }
+    .crypto-panel::before { position: absolute; top: -145px; right: -70px; width: 390px; height: 390px; border: 1px solid rgba(40,120,255,.12); border-radius: 50%; content: ""; box-shadow: 0 0 0 29px rgba(40,120,255,.025), 0 0 0 60px rgba(40,120,255,.018); pointer-events: none; }
+    .crypto-intro { position: relative; z-index: 1; max-width: 610px; margin: 0 auto 26px; text-align: center; }
+    .crypto-kicker { margin: 0 0 9px; color: var(--blue-bright); font: 700 10px var(--mono); letter-spacing: .19em; text-transform: uppercase; }
+    .crypto-intro h2 { color: #f2fff2; font-size: clamp(24px, 4.5vw, 34px); letter-spacing: .02em; }
+    .crypto-copy { margin: 10px 0 0; color: #98adca; font-size: 13px; line-height: 1.65; }
+    .crypto-payment-logos { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; max-width: 790px; margin: 0 auto; padding: 0; list-style: none; }
+    .crypto-payment-item { min-width: 0; min-height: 82px; display: flex; align-items: center; justify-content: center; gap: 13px; padding: 13px; border: 1px solid rgba(70,157,255,.19); border-radius: 8px; background: rgba(4,12,31,.66); box-shadow: inset 0 1px rgba(255,255,255,.035); transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
+    .crypto-payment-item:hover { transform: translateY(-3px); border-color: rgba(40,120,255,.55); box-shadow: 0 10px 28px rgba(0,0,0,.27), 0 0 22px rgba(40,120,255,.08); }
+    .crypto-payment-item img { display: block; width: 42px; height: 42px; flex: none; object-fit: contain; border-radius: 50%; filter: drop-shadow(0 0 10px rgba(40,120,255,.12)); }
+    .crypto-payment-item span { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+    .crypto-payment-item strong { color: #e5f1ff; font-size: 13px; font-weight: 650; }
+    .crypto-payment-item small { color: var(--blue); font: 700 9px var(--mono); letter-spacing: .17em; }
+    .site-footer { padding: 23px 0 30px; border-top: 1px solid rgba(76,164,255,.09); color: #6d829f; font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 23px; }
+    .footer-meta { width: 100%; display: flex; justify-content: space-between; gap: 20px; }
+    .footer-inner b { color: #91aacc; font-weight: 500; }
+    .cloudflare-link { position: relative; isolation: isolate; min-width: 178px; min-height: 58px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 0 23px; overflow: hidden; border: 1px solid rgba(40,120,255,.74); border-radius: 10px; color: #f4f8ff; background: linear-gradient(145deg, rgba(21,34,65,.96), rgba(5,11,27,.96)); box-shadow: 0 0 0 1px rgba(40,120,255,.1), 0 0 20px rgba(40,120,255,.14), 0 8px 0 rgba(8,20,46,.95), 0 15px 26px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.13); font: 650 13px var(--sans); letter-spacing: .035em; text-decoration: none; text-transform: none; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .cloudflare-link::before { position: absolute; z-index: -1; inset: 1px; border-radius: 9px; content: ""; background: linear-gradient(115deg, rgba(255,255,255,.08), transparent 36%, rgba(40,120,255,.04)); pointer-events: none; }
+    .cloudflare-link:hover { transform: translateY(-3px); border-color: rgba(180,221,255,.95); box-shadow: 0 0 0 1px rgba(40,120,255,.16), 0 0 25px rgba(40,120,255,.23), 0 10px 0 rgba(8,20,46,.95), 0 20px 32px rgba(0,0,0,.52), inset 0 1px rgba(255,255,255,.17); }
+    .cloudflare-link:active { transform: translateY(2px); box-shadow: 0 0 15px rgba(40,120,255,.15), 0 3px 0 rgba(8,20,46,.95), inset 0 2px 7px rgba(0,0,0,.35); }
+    .cloudflare-link:focus-visible { outline: 2px solid #c5e4ff; outline-offset: 5px; }
+    .cloudflare-mark { width: 39px; height: 22px; flex: none; display: block; }
+    @keyframes blink { 50% { opacity: .35; box-shadow: 0 0 3px var(--blue); } }
+    @keyframes hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
+    @keyframes sheen { 0%, 38% { transform: translateX(-100%); } 65%, 100% { transform: translateX(100%); } }
+    @keyframes scan { from { background-position-y: 0; } to { background-position-y: 100%; } }
+    @media (max-width: 850px) {
+      .shell { width: min(100% - 40px, 700px); }
+      .hero { padding-top: 65px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+      .hero-copy { max-width: 560px; }
+      .visual-stage { width: min(100%, 560px); margin: 0 auto; }
+      .holo-frame { min-height: 410px; }
+      .section { padding-top: 15px; }
+    }
+    @media (max-width: 600px) {
+      .shell { width: calc(100% - 32px); }
+      .nav { min-height: 68px; }
+      .brand { font-size: 11px; letter-spacing: .1em; }
+      .brand-mark { width: 30px; height: 30px; }
+      .nav-links { gap: 15px; }
+      .nav-links a { font-size: 9px; letter-spacing: .08em; }
+      .nav-status { display: none; }
+      .hero { padding: 57px 0 54px; }
+      h1 { font-size: clamp(46px, 13vw, 68px); }
+      .eyebrow { font-size: 9px; }
+      .hero-copy { margin: 21px 0 25px; font-size: 14px; }
+      .action { min-height: 51px; padding: 0 16px; font-size: 10px; }
+      .hero-actions { gap: 9px; }
+      .trust-line { gap: 10px 15px; font-size: 9px; }
+      .holo-frame { min-height: 355px; }
+      .core-card { width: min(83%, 320px); padding: 14px; }
+      .device-art { height: 160px; }
+      .chip { width: 96px; height: 96px; }
+      .chip::before { inset: 9px; }
+      .chip::after { inset: -11px; }
+      .pin-a { top: 14px; left: -7px; box-shadow: 0 0 8px var(--blue), 0 13px var(--blue), 0 26px var(--blue), 0 39px var(--blue), 0 52px var(--blue), 0 65px var(--blue); }
+      .pin-b { right: -7px; bottom: 14px; box-shadow: 0 -13px var(--blue), 0 -26px var(--blue), 0 -39px var(--blue), 0 -52px var(--blue), 0 -65px var(--blue); }
+      .float-label { font-size: 8px; padding: 8px 9px; }
+      .float-label-left { left: 0; }
+      .float-label-right { right: 0; }
+      .visual-grid { inset: -4% 0 -7%; transform: rotateX(64deg) rotateZ(-4deg) translateY(8%) scale(.88); }
+      .ring { width: 88%; }
+      .ring-orbit { width: 75%; }
+      .section { padding-bottom: 64px; }
+      .section-heading { display: block; }
+      .section-note { margin-top: 10px; text-align: left; }
+      .terminal-body { grid-template-columns: 1fr; gap: 22px; padding: 20px 15px; }
+      .terminal-output { gap: 11px; font-size: 10px; }
+      .log-prefix { flex-basis: 66px; }
+      .terminal-aside { display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; padding: 17px 0 0; border-top: 1px solid rgba(66,141,255,.16); border-left: 0; }
+      .terminal-foot { padding: 12px 14px; font-size: 8px; }
+      .crypto-section { padding-bottom: 65px; }
+      .crypto-panel { padding: 24px 15px; }
+      .crypto-payment-logos { gap: 7px; }
+      .crypto-payment-item { min-height: 95px; flex-direction: column; gap: 8px; padding: 10px 4px; text-align: center; }
+      .crypto-payment-item img { width: 34px; height: 34px; }
+      .crypto-payment-item strong { font-size: 10px; }
+      .crypto-payment-item small { font-size: 8px; }
+      .footer-inner { gap: 18px; }
+      .footer-meta { flex-direction: column; align-items: center; gap: 9px; text-align: center; }
+      .cloudflare-link { min-width: 172px; min-height: 56px; }
+    }
+    @media (max-width: 370px) {
+      .shell { width: calc(100% - 26px); }
+      .nav-links { gap: 10px; }
+      .nav-links a { font-size: 8px; }
+      .brand { gap: 8px; font-size: 10px; }
+      .hero-actions .action { flex: 1 1 100%; }
+      .trust-line { gap: 9px; }
+      .terminal-output { font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+    :root {
+      color-scheme: dark;
+      --void: #030711;
+      --panel: rgba(9, 20, 45, .82);
+      --panel-deep: rgba(4, 10, 25, .92);
+      --blue: #2878FF;
+      --blue-bright: #65B8FF;
+      --ice: #b9dcff;
+      --muted: #8da7ca;
+      --line: rgba(73, 150, 255, .25);
+      --glow: 0 0 24px rgba(40, 120, 255, .3), 0 0 78px rgba(0, 100, 255, .13);
+    }
+    body {
+      background:
+        radial-gradient(ellipse 37% 27% at 68% 17%, rgba(0, 115, 255, .22), transparent 73%),
+        radial-gradient(ellipse 48% 34% at 42% 51%, rgba(0, 76, 210, .16), transparent 72%),
+        radial-gradient(ellipse 70% 28% at 50% 100%, rgba(0, 45, 145, .18), transparent 80%),
+        linear-gradient(180deg, #030711 0%, #050d1e 54%, #02050d 100%);
+    }
+    body::before {
+      opacity: .14;
+      background-image: linear-gradient(rgba(85, 162, 255, .075) 1px, transparent 1px), linear-gradient(90deg, rgba(85, 162, 255, .075) 1px, transparent 1px);
+      mask-image: linear-gradient(to bottom, black, transparent 77%);
+    }
+    .site-header {
+      border-bottom-color: rgba(95, 165, 255, .16);
+      background: linear-gradient(180deg, rgba(8, 18, 38, .91), rgba(4, 10, 23, .7));
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .035);
+    }
+    .brand-mark {
+      transform: rotate(45deg);
+      border-radius: 8px;
+      background: linear-gradient(140deg, rgba(101,184,255,.22), rgba(8,25,57,.7));
+      box-shadow: inset 0 0 14px rgba(101,184,255,.17), 0 0 24px rgba(40,120,255,.25);
+    }
+    .nav-links a:hover, .nav-links a:focus-visible { color: #b9dcff; }
+    .hero::after {
+      right: 0;
+      width: min(74vw, 760px);
+      background: radial-gradient(circle, rgba(40,120,255,.16), rgba(0,74,210,.04) 42%, transparent 70%);
+      filter: blur(28px);
+    }
+    .visual-stage::after {
+      position: absolute;
+      z-index: 0;
+      top: -15%;
+      left: 17%;
+      width: 66%;
+      height: 58%;
+      content: "";
+      pointer-events: none;
+      background: linear-gradient(118deg, transparent 18%, rgba(101,184,255,.12) 47%, transparent 70%);
+      filter: blur(32px);
+      transform: rotate(-17deg);
+    }
+    .holo-frame {
+      isolation: isolate;
+      filter: drop-shadow(0 35px 34px rgba(0,0,0,.42));
+    }
+    .holo-frame::before {
+      position: absolute;
+      z-index: -1;
+      inset: 9% 3%;
+      content: "";
+      border: 1px solid rgba(145,207,255,.72);
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(184,224,255,.3), rgba(32,112,255,.13) 13%, rgba(7,22,51,.35) 46%, rgba(14,62,134,.2)),
+        rgba(5,15,34,.6);
+      box-shadow:
+        0 0 4px 1px rgba(167,218,255,.7),
+        0 0 21px 4px rgba(40,120,255,.42),
+        0 0 66px 11px rgba(0,87,255,.25),
+        0 40px 62px rgba(0,0,0,.55),
+        inset 0 2px 0 rgba(255,255,255,.86),
+        inset 0 -14px 26px rgba(0,82,255,.19);
+      transform: rotateX(6deg) rotateY(-3deg) rotateZ(2deg) translateZ(-24px);
+      backdrop-filter: blur(15px) saturate(1.4);
+    }
+    .holo-frame::after {
+      position: absolute;
+      z-index: 1;
+      top: 9.5%;
+      left: 13%;
+      width: 42%;
+      height: 1px;
+      content: "";
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+      box-shadow: 0 0 9px 2px rgba(133,202,255,.86);
+    }
+    .core-card {
+      border-color: rgba(151,210,255,.58);
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(25,53,94,.88), rgba(5,14,34,.95) 66%, rgba(13,43,87,.9));
+      box-shadow:
+        0 31px 72px rgba(0,0,0,.62),
+        0 0 28px rgba(40,120,255,.2),
+        inset 0 1px rgba(255,255,255,.23),
+        inset 0 -8px 24px rgba(0,90,255,.16);
+      backdrop-filter: blur(17px) saturate(1.3);
+    }
+    .device-art {
+      border-color: rgba(90,166,255,.32);
+      border-radius: 11px;
+      background:
+        radial-gradient(ellipse at 50% 54%, rgba(28,112,255,.3), transparent 66%),
+        linear-gradient(rgba(93,171,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93,171,255,.05) 1px, transparent 1px),
+        linear-gradient(150deg, #071a39, #040b1c 70%);
+      box-shadow: inset 0 1px rgba(255,255,255,.09), inset 0 0 27px rgba(40,120,255,.12), 0 12px 28px rgba(0,0,0,.24);
+    }
+    .device-art::before { opacity: .65; }
+    .chip {
+      border-color: rgba(148,211,255,.9);
+      background: linear-gradient(145deg, rgba(48,127,255,.8), rgba(7,27,62,.97));
+      box-shadow: 0 0 38px rgba(40,120,255,.5), inset 0 0 30px rgba(107,189,255,.22), 0 13px 28px rgba(0,0,0,.38);
+    }
+    .ring { box-shadow: 0 0 35px rgba(40,120,255,.18), inset 0 0 28px rgba(40,120,255,.12); }
+    .visual-grid { opacity: .2; filter: drop-shadow(0 0 9px rgba(40,120,255,.18)); }
+    .float-label {
+      border-color: rgba(110,183,255,.44);
+      background: linear-gradient(145deg, rgba(14,34,69,.92), rgba(4,12,28,.94));
+      box-shadow: 0 14px 35px rgba(0,0,0,.47), 0 0 24px rgba(40,120,255,.16), inset 0 1px rgba(255,255,255,.13);
+    }
+    .action-primary {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      min-height: 58px;
+      padding-inline: 25px;
+      border: 1px solid rgba(203,232,255,.96);
+      border-radius: 12px;
+      color: #041229;
+      background: linear-gradient(180deg, #eaf6ff 0%, #9bd1ff 24%, #4a9cff 58%, #2878ff 100%);
+      box-shadow: 0 0 4px rgba(204,235,255,.86), 0 0 25px rgba(40,120,255,.53), 0 8px 0 #124ca3, 0 17px 27px rgba(0,0,0,.5), inset 0 1px #fff, inset 0 -4px 9px rgba(0,43,130,.4);
+      text-shadow: 0 1px rgba(255,255,255,.42);
+    }
+    .action-primary::before {
+      position: absolute;
+      z-index: -1;
+      inset: 1px;
+      content: "";
+      border-radius: 10px;
+      background: linear-gradient(112deg, rgba(255,255,255,.3), transparent 35%, rgba(255,255,255,.1) 63%, transparent);
+      pointer-events: none;
+    }
+    .action-primary:hover {
+      background: linear-gradient(180deg, #f6fbff 0%, #b9e1ff 22%, #62adff 60%, #3485ff 100%);
+      box-shadow: 0 0 8px rgba(211,239,255,.95), 0 0 36px rgba(40,120,255,.68), 0 10px 0 #124ca3, 0 23px 34px rgba(0,0,0,.54), inset 0 1px #fff;
+    }
+    .action-primary svg { animation: arrow-slide 1.65s ease-in-out infinite; }
+    .action-secondary {
+      border-color: rgba(110,183,255,.56);
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(21,48,91,.78), rgba(5,15,34,.9));
+      box-shadow: 0 0 17px rgba(40,120,255,.13), inset 0 1px rgba(255,255,255,.12), inset 0 -5px 15px rgba(0,82,255,.1);
+      backdrop-filter: blur(12px);
+    }
+    .terminal-shell, .crypto-panel, .catalog-card {
+      border-color: rgba(102,173,255,.33);
+      background: linear-gradient(140deg, rgba(13,31,65,.93), rgba(4,11,26,.96) 65%, rgba(9,28,58,.93));
+      box-shadow: 0 26px 74px rgba(0,0,0,.43), 0 0 32px rgba(20,93,220,.13), inset 0 1px rgba(255,255,255,.1), inset 0 -10px 22px rgba(0,68,190,.1);
+      backdrop-filter: blur(13px) saturate(1.25);
+    }
+    .terminal-bar { background: linear-gradient(180deg, rgba(14,33,68,.73), rgba(5,13,30,.54)); }
+    .terminal-foot, .terminal-bar { border-color: rgba(105,170,255,.18); }
+    .crypto-panel {
+      border-radius: 20px;
+      background: linear-gradient(125deg, rgba(15,38,79,.91), rgba(5,13,30,.96) 58%, rgba(10,32,68,.93));
+      box-shadow: 0 30px 75px rgba(0,0,0,.5), 0 0 43px rgba(0,90,255,.16), inset 0 1px rgba(255,255,255,.14), inset 0 -12px 26px rgba(0,77,220,.13);
+    }
+    .crypto-payment-item {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(99,177,255,.4);
+      border-radius: 13px;
+      background: linear-gradient(145deg, rgba(12,31,65,.9), rgba(4,12,29,.96));
+      box-shadow: 0 10px 25px rgba(0,0,0,.29), inset 0 1px rgba(255,255,255,.13), inset 0 -5px 14px rgba(0,84,220,.11);
+    }
+    .crypto-payment-item:hover {
+      border-color: rgba(151,213,255,.85);
+      box-shadow: 0 14px 30px rgba(0,0,0,.39), 0 0 27px rgba(40,120,255,.25), inset 0 1px rgba(255,255,255,.23);
+    }
+    .crypto-payment-item img { filter: drop-shadow(0 0 11px rgba(40,120,255,.35)); }
+    .cloudflare-link {
+      border-color: rgba(101,184,255,.7);
+      background: linear-gradient(145deg, rgba(16,35,71,.96), rgba(4,10,25,.97));
+      box-shadow: 0 0 0 1px rgba(40,120,255,.14), 0 0 22px rgba(40,120,255,.2), 0 8px 0 rgba(5,13,30,.98), 0 17px 30px rgba(0,0,0,.5), inset 0 1px rgba(255,255,255,.17);
+    }
+    .cloudflare-link::before { background: linear-gradient(115deg, rgba(255,255,255,.1), transparent 36%, rgba(40,120,255,.08)); }
+    .cloudflare-link:hover { border-color: rgba(180,221,255,.95); box-shadow: 0 0 0 1px rgba(40,120,255,.2), 0 0 30px rgba(40,120,255,.32), 0 10px 0 rgba(5,13,30,.98), 0 22px 35px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.22); }
+    .cloudflare-link:focus-visible, .action:focus-visible, .nav-links a:focus-visible { outline-color: #b8ddff; }
+    .catalog-section { padding: 0 0 88px; scroll-margin-top: 28px; }
+    .catalog-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 0 0 22px; }
+    .catalog-heading h2 { margin: 0; font-size: clamp(26px, 3.4vw, 39px); letter-spacing: -.045em; }
+    .catalog-heading .section-note { max-width: 390px; }
+    .catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .catalog-card { min-width: 0; padding: 20px; border: 1px solid rgba(102,173,255,.33); border-radius: 16px; background: linear-gradient(145deg, rgba(15,36,74,.91), rgba(5,13,30,.96)); transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease; }
+    .catalog-card:hover { transform: translateY(-4px); border-color: rgba(129,195,255,.72); box-shadow: 0 25px 45px rgba(0,0,0,.37), 0 0 28px rgba(40,120,255,.2), inset 0 1px rgba(255,255,255,.15); }
+    .catalog-index { margin: 0 0 18px; color: #71baff; font: 9px var(--mono); letter-spacing: .14em; }
+    .catalog-card h3 { margin: 0 0 8px; color: #f2f8ff; font-size: 17px; }
+    .catalog-card > p:not(.catalog-index) { min-height: 42px; margin: 0 0 18px; color: #9cb1cc; font-size: 13px; line-height: 1.55; }
+    .catalog-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 13px; border-top: 1px solid rgba(111,175,255,.18); }
+    .catalog-bottom strong { color: #e1f1ff; font-size: 19px; }
+    .catalog-bottom a { color: #8cc8ff; font: 600 11px var(--mono); text-decoration: none; text-transform: uppercase; letter-spacing: .08em; }
+    .catalog-bottom a:hover, .catalog-bottom a:focus-visible { color: #fff; text-decoration: underline; }
+    @keyframes arrow-slide {
+      0%, 70%, 100% { transform: translateX(0); }
+      35% { transform: translateX(5px); }
+    }
+    @media (max-width: 850px) {
+      .holo-frame::before { inset: 7% 1%; }
+    }
+    @media (max-width: 600px) {
+      .holo-frame::before { inset: 7% 1%; border-radius: 22px; }
+      .ring { width: 68%; }
+      .catalog-section { padding-bottom: 65px; }
+      .catalog-heading { display: block; }
+      .catalog-heading .section-note { margin-top: 10px; text-align: left; }
+      .catalog-grid { grid-template-columns: 1fr; gap: 10px; }
+      .catalog-card { padding: 17px; }
+      .catalog-card > p:not(.catalog-index) { min-height: 0; margin-bottom: 14px; }
+      .action-primary { box-shadow: 0 0 4px rgba(204,235,255,.86), 0 0 22px rgba(40,120,255,.48), 0 6px 0 #124ca3, 0 14px 23px rgba(0,0,0,.48), inset 0 1px #fff, inset 0 -4px 9px rgba(0,43,130,.4); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .status-dot { animation: none !important; }
+      .holo-frame, .float-label-left, .float-label-right { animation: none !important; }
+    }
+    .cloudflare-link {
+      width: min(260px, 100%);
+      min-width: 0;
+      min-height: 86px;
+      gap: 16px;
+      padding: 14px 23px;
+      border-color: rgba(255, 166, 91, .76);
+      border-radius: 17px;
+      background:
+        radial-gradient(ellipse at 22% -15%, rgba(255, 139, 45, .26), transparent 58%),
+        linear-gradient(145deg, rgba(24, 38, 67, .98), rgba(5, 12, 27, .99));
+      box-shadow:
+        0 0 0 1px rgba(243, 128, 32, .2),
+        0 0 28px rgba(243, 128, 32, .24),
+        0 8px 0 rgba(5, 13, 30, .98),
+        0 19px 32px rgba(0, 0, 0, .52),
+        inset 0 1px 0 rgba(255, 255, 255, .28),
+        inset 0 -3px 8px rgba(243, 128, 32, .11);
+      font-size: 16px;
+    }
+    .cloudflare-link::before {
+      inset: 1px;
+      border-radius: 15px;
+      background:
+        radial-gradient(ellipse at 24% 0%, rgba(255, 164, 91, .22), transparent 56%),
+        linear-gradient(115deg, rgba(255, 255, 255, .12), transparent 43%, rgba(243, 128, 32, .08));
+    }
+    .cloudflare-link:hover {
+      border-color: rgba(255, 190, 128, .98);
+      box-shadow:
+        0 0 0 1px rgba(243, 128, 32, .26),
+        0 0 34px rgba(243, 128, 32, .34),
+        0 10px 0 rgba(5, 13, 30, .98),
+        0 22px 36px rgba(0, 0, 0, .56),
+        inset 0 1px 0 rgba(255, 255, 255, .3);
+    }
+    .cloudflare-mark {
+      width: 74px;
+      height: auto;
+      filter: drop-shadow(0 0 4px rgba(255, 158, 76, .54)) drop-shadow(0 4px 8px rgba(243, 128, 32, .34));
+    }
+    @media (max-width: 370px) {
+      .cloudflare-link { width: min(244px, 100%); }
+    }
+
+    /* Crop the portrait artwork to its complete terminal panel. */
+    .visual-stage {
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      perspective: none;
+    }
+    .visual-halo { inset: 8%; }
+    .artwork-frame {
+      position: relative;
+      width: min(100%, 440px);
+      aspect-ratio: 674 / 1112;
+      overflow: hidden;
+      border-radius: clamp(8px, 2.5vw, 11px);
+      box-shadow: 0 28px 70px rgba(0,0,0,.48), 0 0 38px rgba(40,120,255,.17);
+    }
+    .brand-artwork {
+      position: absolute;
+      z-index: 1;
+      display: block;
+      width: 106.8%;
+      max-width: none;
+      height: auto;
+      top: -21.4%;
+      left: -3.4%;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="Blueprint Technology home">
+        <span class="brand-mark" aria-hidden="true"><span>B</span></span>
+        <span>Blueprint Technology</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#system">System</a>
+        <a href="#services">Services</a>
+        <a href="#payment">Payment</a>
+      </nav>
+      <div class="nav-status"><span class="status-dot" aria-hidden="true"></span> System ready</div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="shell hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">SCOREZT 7T &nbsp; / &nbsp; ACCESS INTERFACE</p>
+          <h1 id="page-title">SCOREZT <span>EXPLOIT</span> v2.1</h1>
+          <p class="hero-copy">Bootloader status: <strong>UNLOCKED</strong><br>Root access granted via ScoreZT-Exploit-v2.1. System is now fully exploitable.</p>
+          <div class="hero-actions">
+            <a class="action action-primary" href="https://blueprinttechnology.dev/redirect.html">
+              DOWNLOAD EXPLOIT v2.1
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.5 10h14m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="action action-secondary" href="#payment">CRYPTO ACCEPTED <span aria-hidden="true">↘</span></a>
+          </div>
+          <div class="trust-line" aria-label="System status">
+            <span><b>●</b> BOOTLOADER UNLOCKED</span>
+            <span><b>●</b> ROOT ACCESS GRANTED</span>
+          </div>
+        </div>
+
+        <div class="visual-stage" aria-label="Blueprint Technology ScoreZT terminal artwork">
+          <div class="visual-halo" aria-hidden="true"></div>
+          <div class="artwork-frame">
+            <img class="brand-artwork" src="assets/blueprint-scorezt-terminal.png" alt="Blue ScoreZT terminal artwork with Blueprint Technology branding, bootloader unlocked, and system ready" width="720" height="1616" fetchpriority="high" decoding="async">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="system" aria-labelledby="system-title">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="eyebrow">LIVE OUTPUT &nbsp; / &nbsp; 01</p><h2 id="system-title">Access sequence</h2></div>
+          <p class="section-note">Target identified: SCOREZT 7T<br>FCC ID: 2A3XN-SCOREZT</p>
+        </div>
+        <div class="terminal-shell">
+          <div class="terminal-bar">
+            <div class="window-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span class="terminal-name">scorezt://system/terminal</span>
+            <span class="terminal-live"><span class="status-dot" aria-hidden="true"></span> ACTIVE</span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-output" aria-label="System output">
+              <div><span class="log-prefix">[INFO]</span><span>Initializing ScoreZT Exploit v2.1...</span></div>
+              <div><span class="log-prefix">[INFO]</span><span>Connecting to target via USB-Handshake...</span></div>
+              <div><span class="log-prefix">[INFO]</span><span>Target identified: SCOREZT 7T (FCC ID: 2A3XN-SCOREZT)</span></div>
+              <div class="success"><span class="log-prefix">[SUCCESS]</span><span>Bootloader status: UNLOCKED</span></div>
+              <div class="success"><span class="log-prefix">[SUCCESS]</span><span>Root access granted via ScoreZT-Exploit-v2.1</span></div>
+              <div class="ready"><span class="log-prefix">[READY]</span><span>System is now fully exploitable.</span></div>
+            </div>
+            <aside class="terminal-aside" aria-label="System details">
+              <div class="metric">Target device<strong>SCOREZT 7T</strong></div>
+              <div class="metric">Connection<strong>USB handshake</strong></div>
+              <div class="metric">Bootloader<strong><em>Unlocked</em></strong></div>
+              <div class="metric">System state<strong><em>Ready</em></strong></div>
+            </aside>
+          </div>
+          <div class="terminal-foot"><span>Session status: <b>ready</b></span><span>Blueprint Technology / 2.1</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="catalog-section" id="services" aria-labelledby="services-title">
+      <div class="shell catalog-inner">
+        <p class="eyebrow">YOUR DEVICE, ON YOUR TERMS</p>
+        <div class="catalog-heading">
+          <h2 id="services-title">Find your unlock service</h2>
+          <p class="section-note">Choose a device family to see the existing service options. Each checkout link follows Blueprint Technology’s current unlock route.</p>
+        </div>
+        <div class="catalog-grid">
+          <article class="catalog-card"><p class="catalog-index">01 / DEVICE SERVICE</p><h3>iPhone Unlock</h3><p>Carrier unlocking for supported iPhone models.</p><div class="catalog-bottom"><strong>$49.99</strong><a href="https://blueprinttechnology.dev/redirect.html">Continue <span aria-hidden="true">→</span></a></div></article>
+          <article class="catalog-card"><p class="catalog-index">02 / DEVICE SERVICE</p><h3>Samsung Unlock</h3><p>Get more network flexibility from your Samsung device.</p><div class="catalog-bottom"><strong>$39.99</strong><a href="https://blueprinttechnology.dev/redirect.html">Continue <span aria-hidden="true">→</span></a></div></article>
+          <article class="catalog-card"><p class="catalog-index">03 / DEVICE SERVICE</p><h3>Google Pixel Unlock</h3><p>Unlock supported Pixel devices for network freedom.</p><div class="catalog-bottom"><strong>$29.99</strong><a href="https://blueprinttechnology.dev/redirect.html">Continue <span aria-hidden="true">→</span></a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="crypto-section" id="payment" aria-labelledby="crypto-acceptance-title">
+      <div class="shell">
+        <div class="crypto-panel">
+          <div class="crypto-intro">
+            <p class="crypto-kicker">Secure payment options</p>
+            <h2 id="crypto-acceptance-title">WE ACCEPT CRYPTO</h2>
+            <p class="crypto-copy">Choose your preferred cryptocurrency at checkout.</p>
+          </div>
+          <ul class="crypto-payment-logos" aria-label="Accepted cryptocurrencies">
+            <li class="crypto-payment-item"><img src="assets/crypto/bitcoin.svg" alt="Bitcoin logo" width="44" height="44" loading="lazy" decoding="async"><span><strong>Bitcoin</strong><small>BTC</small></span></li>
+            <li class="crypto-payment-item"><img src="assets/crypto/litecoin.svg" alt="Litecoin logo" width="44" height="44" loading="lazy" decoding="async"><span><strong>Litecoin</strong><small>LTC</small></span></li>
+            <li class="crypto-payment-item"><img src="assets/crypto/monero.png" alt="Monero logo" width="44" height="44" loading="lazy" decoding="async"><span><strong>Monero</strong><small>XMR</small></span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <div class="footer-meta"><span><b>Blueprint Technology</b> &nbsp; / &nbsp; SCOREZT EXPLOIT v2.1</span><span>BTC &nbsp; · &nbsp; LTC &nbsp; · &nbsp; XMR</span></div>
+      <a class="cloudflare-link" href="https://www.cloudflare.com/" aria-label="Cloudflare">
+        <img class="cloudflare-mark" src="assets/cloudflare-mark.svg" width="74" height="40" alt="" loading="lazy" decoding="async">
+        <span>Cloudflare</span>
+      </a>
+    </div>
+  </footer>
+</body>
+</html>

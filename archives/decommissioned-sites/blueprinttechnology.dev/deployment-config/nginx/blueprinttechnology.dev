@@ -1,0 +1,19 @@
+server {
+    listen 443 ssl;
+    server_name blueprinttechnology.dev www.blueprinttechnology.dev;
+
+    ssl_certificate /etc/letsencrypt/live/blueprinttechnology.dev/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/blueprinttechnology.dev/privkey.pem;
+
+    root /var/www/html;
+    index index.html index.php;
+
+    location / {
+        try_files $uri$uri/ =404;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    }
+}
+

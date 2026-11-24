@@ -1,0 +1,12 @@
+Litecoin logo asset used in the OEM Unlocks preview
+
+Asset: 500px derivative of Litecoin Logo.jpg (blue Litecoin logo v5).
+Author: Litecoin Foundation Ltd & The Tokens Agency.
+Source and permission record: https://commons.wikimedia.org/wiki/File:Litecoin_Logo.jpg
+The file page identifies MIT Licence (Litecoin Foundation Ltd) permission and
+unrestricted commercial use. Its file history points to Litecoin Foundation's
+blue logo announcement: https://litecoin.com/en/news/litecoin-community-moves-to-adopt-new-blue-logo
+License text: https://github.com/litecoin-project/litecoin/blob/master/COPYING
+
+This image is distributed as a local, downscaled JPEG derivative without logo
+recoloring. Attribution is retained here. No endorsement is implied.

@@ -1,0 +1,31 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name oemunlocks.com www.oemunlocks.com;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name oemunlocks.com www.oemunlocks.com;
+
+    root /var/www/oemunlocks;
+    index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/oemunlocks.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/oemunlocks.com/privkey.pem;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+}

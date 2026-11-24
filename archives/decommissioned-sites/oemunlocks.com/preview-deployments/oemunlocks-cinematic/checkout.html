@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050705">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="O.E.M. Unlocks7T checkout design preview.">
+  <title>Checkout Design · O.E.M. Unlocks7T</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/checkout-preview.js" defer></script>
+</head>
+<body class="checkout-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header checkout-header">
+    <a class="brand" href="index.html" aria-label="O.E.M. Unlocks7T home">
+      <span class="brand-mark">O.E.M.</span><span class="brand-word">UNLOCKS7T</span>
+    </a>
+    <a class="header-back" href="index.html#services"><span aria-hidden="true">←</span> Back to services</a>
+  </header>
+
+  <main id="main" class="checkout-main">
+    <div class="checkout-heading">
+      <div><p class="section-kicker">Checkout design / visual preview</p><h1 id="preview-title">Bootloader Unlock</h1><p class="checkout-price">Service price <strong id="preview-price">$45.00 USD</strong></p></div>
+      <a class="text-link" href="index.html#services">Choose another service <span aria-hidden="true">↗</span></a>
+    </div>
+
+    <div class="preview-notice"><span class="notice-mark" aria-hidden="true">i</span><p><strong>Preview only.</strong> This screen does not request a quote, show a receiving address, collect customer details, submit a transaction reference, or create an order. Continue to the existing checkout only if you intend to use the live payment flow.</p></div>
+
+    <div class="checkout-grid">
+      <section class="checkout-panel payment-panel" aria-labelledby="payment-method-title">
+        <div class="panel-heading"><span class="panel-index">01</span><div><p>Payment</p><h2 id="payment-method-title">Choose a currency</h2></div></div>
+        <p class="panel-copy">Select one of the existing payment methods. A current quote, matching receiving address, and QR code are provided in the live checkout.</p>
+        <div class="currency-grid" role="group" aria-label="Payment method preview">
+          <button class="currency-option" type="button" data-currency="BTC" aria-pressed="true"><img src="assets/crypto/bitcoin.svg" alt="" width="32" height="32"><span>Bitcoin</span><small>BTC</small></button>
+          <button class="currency-option" type="button" data-currency="LTC" aria-pressed="false"><img src="assets/crypto/litecoin-blue.jpg" alt="" width="32" height="32"><span>Litecoin</span><small>LTC</small></button>
+          <button class="currency-option" type="button" data-currency="XMR" aria-pressed="false"><img src="assets/crypto/monero.png" alt="" width="32" height="32"><span>Monero</span><small>XMR</small></button>
+        </div>
+        <div class="quote-placeholder" role="status" aria-live="polite"><span class="quote-icon" aria-hidden="true">⌁</span><span id="quote-disclaimer">Live quote, receiving address, and scannable QR code appear in the existing checkout.</span></div>
+        <div class="qr-placeholder" aria-hidden="true"><div class="qr-frame"><span>LIVE<br>QUOTE<br>REQUIRED</span></div><small>QR code available in live checkout</small></div>
+        <a class="button button-primary live-checkout" id="live-checkout" href="https://oemunlocks.com/payment.php?service=bootloader&amp;currency=BTC">Continue to existing checkout <span aria-hidden="true">→</span></a>
+      </section>
+
+      <section class="checkout-panel details-panel" aria-labelledby="customer-details-title">
+        <div class="panel-heading"><span class="panel-index">02</span><div><p>Device details</p><h2 id="customer-details-title">Your information</h2></div></div>
+        <p class="panel-copy">Preview of the existing device-details step. These fields are disabled here and do not collect or transmit data.</p>
+        <div class="preview-fields">
+          <div class="field"><label for="preview-email">Email address</label><input id="preview-email" type="email" placeholder="you@example.com" disabled></div>
+          <div class="field"><label for="preview-model">Device model</label><input id="preview-model" type="text" placeholder="Brand and exact model" disabled></div>
+          <div class="field"><label for="preview-txid">Transaction reference</label><input id="preview-txid" type="text" placeholder="Enter after sending in live checkout" disabled></div>
+          <label class="ownership-check"><input type="checkbox" disabled><span>I own this device or have the owner's authorization. I understand that eligibility and payment require review before fulfillment.</span></label>
+        </div>
+        <p class="details-note">A submitted transaction reference is not proof of payment. Existing verification and review rules remain in the live checkout.</p>
+        <a class="text-link details-link" href="https://oemunlocks.com/payment.php?service=bootloader">Open existing checkout <span aria-hidden="true">↗</span></a>
+      </section>
+    </div>
+  </main>
+
+  <footer class="checkout-footer"><span>© 2026 O.E.M. Unlocks7T</span><a href="index.html">Return to services <span aria-hidden="true">↗</span></a></footer>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030812">
+  <meta name="description" content="Blueprint Technology — fast, reliable device unlocking for iPhone, Samsung, and Google Pixel.">
+  <title>Blueprint Technology — Move Beyond Limits</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f7fbff;
+      --muted: #afc1dc;
+      --blue: #3895ff;
+      --ice: #b8ddff;
+      --navy: #030812;
+      --panel: rgba(7, 20, 42, .82);
+      --line: rgba(129, 190, 255, .26);
+      --content: 1080px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--navy); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 45% 33% at 50% 14%, rgba(0, 83, 206, .24), transparent 76%),
+        radial-gradient(ellipse 55% 36% at 50% 59%, rgba(0, 67, 185, .18), transparent 70%),
+        linear-gradient(180deg, #030812 0%, #050c1b 54%, #02060d 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    .site-header {
+      width: min(var(--content), calc(100% - 44px));
+      height: 82px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      color: #f7fbff;
+      text-decoration: none;
+      font-size: 19px;
+      font-weight: 740;
+      letter-spacing: -.045em;
+    }
+    .brand-mark {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(133, 194, 255, .58);
+      border-radius: 9px;
+      background: linear-gradient(145deg, rgba(68, 151, 255, .28), rgba(10, 31, 62, .5));
+      box-shadow: 0 0 20px rgba(28, 120, 255, .24), inset 0 0 12px rgba(125, 190, 255, .16);
+    }
+    .brand-mark svg { width: 18px; height: 18px; }
+    .header-note {
+      color: #9daecc;
+      font-size: 9px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .hero {
+      min-height: calc(100svh - 82px);
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 49px 22px 52px;
+      text-align: center;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      top: -40px;
+      left: 50%;
+      width: min(1100px, 140vw);
+      height: 660px;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(23, 116, 255, .31), transparent 36%),
+        radial-gradient(ellipse at 0% 53%, rgba(0, 72, 202, .2), transparent 30%),
+        radial-gradient(ellipse at 100% 54%, rgba(0, 81, 215, .17), transparent 32%);
+      filter: blur(14px);
+      pointer-events: none;
+    }
+    .eyebrow {
+      margin: 0 0 23px;
+      color: #98b6dd;
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 950px;
+      margin: 0;
+      font-size: clamp(2.45rem, 7.4vw, 6.05rem);
+      font-weight: 840;
+      line-height: .91;
+      letter-spacing: -.065em;
+      text-wrap: balance;
+      text-shadow: 0 3px 25px rgba(210, 235, 255, .1);
+    }
+    h1 span {
+      display: block;
+      padding-bottom: .07em;
+      color: transparent;
+      background: linear-gradient(180deg, #f0f8ff 5%, #99caff 54%, #3285ec 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      filter: drop-shadow(0 5px 25px rgba(29, 125, 255, .26));
+    }
+    .hero-copy {
+      max-width: 590px;
+      margin: 17px 0 0;
+      color: #bdcbe0;
+      font-size: clamp(14px, 2vw, 18px);
+      line-height: 1.6;
+      letter-spacing: -.01em;
+    }
+    .panel-stage {
+      position: relative;
+      width: min(820px, 100%);
+      margin: 57px auto 0;
+      perspective: 1200px;
+      z-index: 0;
+    }
+    .panel-stage::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      left: 5%;
+      right: 5%;
+      bottom: -29px;
+      height: 65px;
+      border-radius: 50%;
+      background: #006dff;
+      filter: blur(40px);
+      opacity: .67;
+    }
+    .panel-stage::after {
+      content: "";
+      position: absolute;
+      z-index: -3;
+      left: -20vw;
+      right: -20vw;
+      bottom: -100px;
+      height: 180px;
+      background:
+        repeating-linear-gradient(180deg, transparent 0 8px, rgba(41, 122, 255, .07) 9px, transparent 11px),
+        radial-gradient(ellipse at 50% 0%, rgba(30, 112, 255, .21), transparent 66%);
+      mask-image: linear-gradient(180deg, #000, transparent 87%);
+      pointer-events: none;
+    }
+    .glass-panel {
+      position: relative;
+      padding: 14px;
+      border: 1px solid rgba(161, 211, 255, .98);
+      border-radius: 33px;
+      background:
+        linear-gradient(145deg, rgba(163, 218, 255, .27), rgba(23, 93, 201, .19) 13%, rgba(5, 19, 43, .84) 48%, rgba(9, 42, 91, .67) 100%);
+      box-shadow:
+        0 0 5px 1px rgba(148, 208, 255, .95),
+        0 0 20px 3px rgba(31, 128, 255, .74),
+        0 0 66px 13px rgba(0, 96, 255, .45),
+        0 42px 56px rgba(0, 0, 0, .68),
+        inset 0 1px 0 rgba(255, 255, 255, .92),
+        inset 0 -8px 22px rgba(0, 91, 255, .26);
+      transform: rotateX(6deg) rotateY(-3deg) rotateZ(2.1deg);
+      transform-style: preserve-3d;
+      animation: panel-float 7s ease-in-out infinite;
+      backdrop-filter: blur(16px) saturate(1.4);
+    }
+    .glass-panel::before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(112, 178, 255, .32);
+      border-radius: 27px;
+      box-shadow: inset 0 0 25px rgba(30, 121, 255, .13);
+      pointer-events: none;
+    }
+    .glass-panel::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 55px;
+      width: 44%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.98), transparent);
+      box-shadow: 0 0 8px 2px rgba(123, 195, 255, .9);
+      pointer-events: none;
+    }
+    .panel-content {
+      position: relative;
+      z-index: 1;
+      padding: clamp(17px, 3.2vw, 27px) clamp(14px, 3vw, 28px) 19px;
+      border: 1px solid rgba(98, 161, 238, .47);
+      border-radius: 24px;
+      background:
+        linear-gradient(155deg, rgba(10, 31, 66, .91), rgba(4, 14, 32, .91) 62%, rgba(10, 35, 74, .87));
+      box-shadow:
+        inset 0 2px 17px rgba(135, 194, 255, .12),
+        inset 0 -7px 25px rgba(0, 103, 255, .17),
+        0 5px 14px rgba(0, 0, 0, .36);
+    }
+    .panel-label {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 4px 14px;
+      color: #93afd6;
+      font-size: 9px;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+    .url-field {
+      min-height: 67px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 8px 9px 8px 17px;
+      border: 1px solid rgba(86, 153, 244, .76);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(4, 13, 29, .97), rgba(10, 28, 57, .96));
+      box-shadow: 0 0 17px rgba(30, 111, 248, .2), inset 0 2px 8px rgba(0, 0, 0, .55);
+      text-align: left;
+    }
+    .url-icon { display: grid; place-items: center; flex: 0 0 auto; color: #d5ebff; }
+    .url-icon svg { width: 22px; height: 22px; filter: drop-shadow(0 0 7px rgba(101, 177, 255, .6)); }
+    .url-text {
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #c3d8f5;
+      font-size: clamp(11px, 2vw, 16px);
+      letter-spacing: .005em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cta {
+      position: relative;
+      flex: 0 0 auto;
+      min-height: 49px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 21px;
+      border: 1px solid #fff;
+      border-radius: 999px;
+      color: #06152c;
+      background: linear-gradient(180deg, #fff 0%, #e5f3ff 100%);
+      box-shadow: 0 0 13px rgba(238, 248, 255, .76), 0 0 35px rgba(48, 146, 255, .55), inset 0 1px 0 #fff;
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .cta:hover, .cta:focus-visible { transform: translateY(-1px); box-shadow: 0 0 20px rgba(238,248,255,.9), 0 0 45px rgba(48,146,255,.75); }
+    .cta svg { width: 18px; height: 18px; animation: arrow-pulse 1.35s ease-in-out infinite; }
+    .panel-points {
+      display: flex;
+      justify-content: center;
+      gap: clamp(16px, 4vw, 43px);
+      margin: 15px 0 0;
+      color: #c5d7ef;
+      font-size: 11px;
+    }
+    .panel-points span { display: inline-flex; align-items: center; gap: 6px; }
+    .panel-points svg { width: 14px; height: 14px; color: #a9d6ff; filter: drop-shadow(0 0 5px #267eff); }
+    .features {
+      width: min(850px, 100%);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin: 117px auto 0;
+      position: relative;
+      z-index: 1;
+    }
+    .feature {
+      min-width: 0;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+    }
+    .feature + .feature { border-left: 1px solid rgba(128, 177, 236, .23); }
+    .feature svg {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 6px;
+      color: #d4e9ff;
+      stroke-width: 1.45;
+      filter: drop-shadow(0 0 8px rgba(62, 151, 255, .78));
+    }
+    .feature strong { color: #eef6ff; font-size: 9px; font-weight: 690; letter-spacing: .2em; text-transform: uppercase; }
+    .feature span { color: #aebed5; font-size: 11px; line-height: 1.4; }
+    .services {
+      padding: 93px 22px 100px;
+      background: linear-gradient(180deg, rgba(2, 7, 15, 0), rgba(2, 7, 15, .88) 14%);
+    }
+    .services-inner { width: min(930px, 100%); margin: 0 auto; }
+    .section-kicker { margin: 0 0 12px; color: #80baff; font-size: 10px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; }
+    .services h2 { margin: 0; font-size: clamp(28px, 5vw, 42px); letter-spacing: -.045em; }
+    .services-intro { max-width: 550px; margin: 10px 0 28px; color: #afc1d8; font-size: 15px; line-height: 1.6; }
+    .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .service-card {
+      padding: 20px;
+      border: 1px solid rgba(109, 164, 235, .2);
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(14, 33, 64, .82), rgba(5, 14, 28, .9));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 18px 35px rgba(0,0,0,.2);
+    }
+    .service-card h3 { margin: 0 0 7px; font-size: 17px; letter-spacing: -.02em; }
+    .service-card p { min-height: 43px; margin: 0 0 17px; color: #adbed4; font-size: 13px; line-height: 1.55; }
+    .service-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .price { color: #d9ecff; font-size: 18px; font-weight: 760; }
+    .service-link { color: #83baff; font-size: 12px; text-decoration: none; }
+    .service-link:hover, .service-link:focus-visible { color: #fff; text-decoration: underline; }
+    .route-note { margin: 18px 0 0; color: #8497b2; font-size: 11px; line-height: 1.55; }
+    .site-footer {
+      padding: 23px 22px 32px;
+      border-top: 1px solid rgba(125, 172, 228, .13);
+      color: #7f90a7;
+      font-size: 11px;
+      text-align: center;
+    }
+    .site-footer a { color: #aac3e2; text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+    @keyframes panel-float {
+      0%, 100% { transform: rotateX(6deg) rotateY(-3deg) rotateZ(2.1deg) translateY(0); }
+      50% { transform: rotateX(6deg) rotateY(-3deg) rotateZ(2.1deg) translateY(-5px); }
+    }
+    @keyframes arrow-pulse {
+      0%, 100% { transform: translateX(0); opacity: .88; }
+      50% { transform: translateX(4px); opacity: 1; }
+    }
+    @media (min-width: 1000px) {
+      .hero { padding-top: 58px; }
+      .features { margin-top: 125px; }
+    }
+    @media (max-width: 600px) {
+      .site-header { width: calc(100% - 38px); height: 68px; }
+      .brand { gap: 8px; font-size: 17px; }
+      .brand-mark { width: 27px; height: 27px; }
+      .header-note { max-width: 100px; white-space: normal; text-align: right; line-height: 1.5; font-size: 7px; letter-spacing: .13em; }
+      .hero { min-height: calc(100svh - 68px); padding: 41px 19px 45px; }
+      .eyebrow { margin-bottom: 20px; font-size: 8px; letter-spacing: .27em; }
+      h1 { font-size: clamp(1.9rem, 8.8vw, 3.45rem); line-height: .94; letter-spacing: -.07em; }
+      .hero-copy { max-width: 360px; margin-top: 14px; font-size: 14px; line-height: 1.55; }
+      .panel-stage { width: calc(100% - 2px); margin-top: 49px; }
+      .glass-panel { padding: 9px; border-radius: 25px; transform: rotateX(4deg) rotateY(-2deg) rotateZ(1.6deg); }
+      .glass-panel::before { inset: 4px; border-radius: 20px; }
+      .panel-content { padding: 16px 10px 14px; border-radius: 18px; }
+      .panel-label { margin: 0 5px 12px; font-size: 7px; letter-spacing: .17em; }
+      .url-field { min-height: 56px; gap: 8px; padding: 6px 6px 6px 11px; }
+      .url-icon svg { width: 17px; height: 17px; }
+      .url-text { font-size: clamp(9px, 2.7vw, 11px); }
+      .cta { min-height: 42px; gap: 6px; padding: 0 12px; font-size: 11px; }
+      .cta svg { width: 16px; height: 16px; }
+      .panel-points { gap: 13px; margin-top: 13px; font-size: 9px; }
+      .panel-points span { gap: 4px; }
+      .panel-points svg { width: 12px; height: 12px; }
+      .features { margin-top: 85px; }
+      .feature { padding: 0 7px; gap: 6px; }
+      .feature svg { width: 27px; height: 27px; margin-bottom: 5px; }
+      .feature strong { font-size: 7px; letter-spacing: .15em; }
+      .feature span { font-size: 9px; }
+      .services { padding: 70px 19px 76px; }
+      .service-grid { grid-template-columns: 1fr; gap: 10px; }
+      .service-card { padding: 17px; }
+      .service-card p { min-height: 0; margin-bottom: 14px; }
+    }
+    @media (max-width: 360px) {
+      .site-header { width: calc(100% - 30px); }
+      .brand { flex: 0 0 auto; font-size: 15px; white-space: nowrap; }
+      .header-note { max-width: 100px; white-space: normal; text-align: right; line-height: 1.5; }
+      .hero { padding-inline: 14px; }
+      h1 { font-size: 1.85rem; }
+      .panel-points { gap: 9px; font-size: 8px; }
+      .url-field { gap: 6px; padding-left: 9px; }
+      .cta { gap: 4px; padding-inline: 9px; font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Blueprint Technology home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 17.5 10 6l4 8 2.2-4.1L19 17.5M4 19.5h16" stroke="#DCEEFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>Blueprint Technology</span>
+    </a>
+    <span class="header-note">Technology that moves you</span>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow">Freedom to connect. Power to move.</p>
+      <h1 id="hero-title">YOUR DEVICE.<br>YOUR NETWORK.<span>YOUR NEXT MOVE.</span></h1>
+      <p class="hero-copy">Fast, dependable unlocking for the devices you rely on. Get more freedom from your iPhone, Samsung, or Google Pixel.</p>
+
+      <div class="panel-stage" aria-label="Explore Blueprint Technology unlock services">
+        <div class="glass-panel">
+          <div class="panel-content">
+            <div class="panel-label"><span>Blueprint Technology</span><span>Connection, redefined</span></div>
+            <div class="url-field">
+              <span class="url-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="m9.2 14.8 5.6-5.6M7.1 16.9l-1 1a4 4 0 0 1-5.7-5.7l4.3-4.3a4 4 0 0 1 5.7 0M16.9 7.1l1-1a4 4 0 0 1 5.7 5.7l-4.3 4.3a4 4 0 0 1-5.7 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+              <span class="url-text">blueprinttechnology.dev / unlock</span>
+              <a class="cta" href="#services">Explore services
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </div>
+            <div class="panel-points" aria-label="Service benefits">
+              <span><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Simple process</span>
+              <span><svg viewBox="0 0 20 20" fill="none"><path d="m4 10 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Current payment flow</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="features" aria-label="Blueprint Technology service highlights">
+        <div class="feature">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m18 2-12 17h9l-1 11 12-18h-9l1-10Z" stroke="currentColor" stroke-linejoin="round"/></svg>
+          <strong>Quick start</strong><span>Simple, guided steps</span>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 26h25M7 23v-7h5v7m4 0V9h5v14m4 0V4h5v19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <strong>More freedom</strong><span>Choose your network</span>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="12" cy="10" r="5" stroke="currentColor"/><path d="M3 27v-2a9 9 0 0 1 18 0v2H3Zm19-20a5 5 0 0 1 0 10m1 4a8 8 0 0 1 6 8v-2a8 8 0 0 0-6-6Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <strong>Built around you</strong><span>Help when you need it</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="services" aria-labelledby="services-title">
+      <div class="services-inner">
+        <p class="section-kicker">Your device, on your terms</p>
+        <h2 id="services-title">Find your unlock service</h2>
+        <p class="services-intro">Choose a device family to see the existing service options. Each checkout link follows Blueprint Technology’s current unlock route.</p>
+        <div class="service-grid">
+          <article class="service-card">
+            <h3>iPhone Unlock</h3><p>Carrier unlocking for supported iPhone models.</p>
+            <div class="service-bottom"><span class="price">$49.99</span><a class="service-link checkout-link" href="https://blueprinttechnology.dev/redirect.html">Continue →</a></div>
+          </article>
+          <article class="service-card">
+            <h3>Samsung Unlock</h3><p>Get more network flexibility from your Samsung device.</p>
+            <div class="service-bottom"><span class="price">$39.99</span><a class="service-link checkout-link" href="https://blueprinttechnology.dev/redirect.html">Continue →</a></div>
+          </article>
+          <article class="service-card">
+            <h3>Google Pixel Unlock</h3><p>Unlock supported Pixel devices for network freedom.</p>
+            <div class="service-bottom"><span class="price">$29.99</span><a class="service-link checkout-link" href="https://blueprinttechnology.dev/redirect.html">Continue →</a></div>
+          </article>
+        </div>
+        <p class="route-note">Preview only: these links open the current Blueprint Technology redirect and payment pages. No payment or order is submitted by viewing this preview.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">© Blueprint Technology · <a href="https://blueprinttechnology.dev/redirect.html">Current unlock checkout</a></footer>
+</body>
+</html>
