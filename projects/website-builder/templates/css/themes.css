@@ -55,3 +55,17 @@
     --border: rgba(96, 165, 250, 0.2);
     --shadow: rgba(0, 0, 0, 0.3);
 }
+
+/* Electric Blue Hyperrealistic 3D (preserved from the installed builder theme). */
+[data-theme="electric-blue-3d"] {
+    --bg-primary: #050a1a;
+    --bg-secondary: #0a142e;
+    --bg-card: #0f1e3d;
+    --text-primary: #f0f8ff;
+    --text-secondary: #a8c4e8;
+    --accent: #00bfff;
+    --accent-glow: rgba(0, 191, 255, 0.45);
+    --accent-secondary: #00e5ff;
+    --border: rgba(0, 191, 255, 0.25);
+    --shadow: rgba(0, 160, 255, 0.35);
+}

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
 
-    const themes = ['cyberpunk', 'luxury', 'modern', 'business'];
+    const themes = ['cyberpunk', 'luxury', 'modern', 'business', 'electric-blue-3d'];
     let currentThemeIndex = 0;
 
     // Load saved theme
@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         html.setAttribute('data-theme', savedTheme);
         currentThemeIndex = themes.indexOf(savedTheme);
     }
+
+    if (!themeToggle) return;
 
     themeToggle.addEventListener('click', () => {
         currentThemeIndex = (currentThemeIndex + 1) % themes.length;

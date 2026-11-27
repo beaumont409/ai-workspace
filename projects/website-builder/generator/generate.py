@@ -10,6 +10,7 @@ import sys
 import json
 import shutil
 import argparse
+import importlib.util
 from datetime import datetime
 from pathlib import Path
 
@@ -20,7 +21,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 CONFIG_DIR = BASE_DIR / "config"
 
 # Available themes
-THEMES = ["luxury", "cyberpunk", "modern", "business"]
+THEMES = ["luxury", "cyberpunk", "modern", "business", "electric-blue-3d"]
 
 # Default config template
 DEFAULT_CONFIG = {
@@ -277,6 +278,41 @@ def generate_project(description: str, theme: str = "cyberpunk", business_type: 
     return project_dir
 
 
+def generate_qwen_files(description: str, theme: str, project_dir: Path) -> dict:
+    """Request optional Colab output and save it as review-only project files."""
+    provider_path = Path(__file__).parent / "providers" / "qwen_colab.py"
+    spec = importlib.util.spec_from_file_location("website_builder_qwen_colab", provider_path)
+    provider = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(provider)
+
+    prompt = (
+        "Create a mobile-friendly website implementation for the existing AI Website Builder. "
+        "Use the selected theme and return only index.html, css/style.css, and js/main.js. "
+        "Use lightweight HTML/CSS/vanilla JavaScript, accessible controls, and responsive layout. "
+        "Do not add external dependencies, backend calls, secrets, payment collection, or executable setup instructions.\n\n"
+        f"Theme: {theme}\nProject brief: {description}"
+    )
+    adapter = provider.QwenColabAdapter.from_environment()
+    job_id, files = adapter.generate_files(prompt=prompt, theme=theme)
+    job_record = {
+        "job_id": job_id,
+        "provider": "qwen-colab",
+        "status": adapter.job_status(job_id),
+        "files_written": [],
+        "review_required": True,
+        "code_executed": False,
+    }
+    if files:
+        output_root = project_dir / "qwen-generated"
+        for relative_path, contents in files.items():
+            destination = output_root / relative_path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(contents, encoding="utf-8")
+            job_record["files_written"].append(relative_path)
+    (project_dir / "qwen-job.json").write_text(json.dumps(job_record, indent=2), encoding="utf-8")
+    return job_record
+
+
 def list_projects() -> list:
     """List all generated projects."""
     projects = []
@@ -301,6 +337,8 @@ def main():
     parser.add_argument("--generate", "-g", help="Generate website from description")
     parser.add_argument("--theme", "-t", default="cyberpunk", choices=THEMES, help="Website theme")
     parser.add_argument("--business", "-b", default="general", help="Business type")
+    parser.add_argument("--provider", choices=["template", "qwen-colab"], default="template",
+                        help="Optional generation provider (Qwen requires an authenticated Colab endpoint)")
     parser.add_argument("--list", "-l", action="store_true", help="List all projects")
     parser.add_argument("--demo", action="store_true", help="Generate luxury watch demo")
 
@@ -346,6 +384,10 @@ def main():
             theme=args.theme,
             business_type=args.business
         )
+        if args.provider == "qwen-colab":
+            result = generate_qwen_files(args.generate, args.theme, project_dir)
+            print(json.dumps({"project": str(project_dir), "qwen_job": result}, indent=2))
+            return
         print(f"✅ Website generated: {project_dir}")
         return
 
